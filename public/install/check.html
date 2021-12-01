@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>PaddyShop安装程序</title>	
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+	<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    
+	<style>
+		.ct{
+			width: 960px;
+			margin: auto;
+			font-size: 14px;
+		}
+		.header{
+			height: 90px;
+			margin-bottom: 20px;			
+			border-bottom: 1px solid #d4d4d4;
+		}
+		.footer{
+			
+		}
+		.title{
+			text-align: center;
+			font-size: 16px;
+		}
+		.agreement{}	
+		.tools{
+			width: 100%;			
+			display: flex;
+			display: -webkit-flex;
+			align-items:center;
+			justify-content:center;
+		}	
+		.tools .btn{
+			display: block;
+			width: 200px;
+			line-height: 2.5;
+			height: 40px;
+			background-color: #409EFF;
+			text-align: center;
+			color: #FFFFFF;
+			border-radius: 5px;
+			text-decoration: none;
+			font-size: 16px;
+			margin: 10px;
+		}
+		.checkTable{
+			width: 100%;
+			line-height: 2;
+			margin: 10px 0px;
+		}
+	</style>
+</head>
+<body>
+	<div class="ct header">
+		<div class="logo"><img src="/static/logo.png" width="150"/></div>
+	</div>
+<!-- conntent start  -->
+<div class="ct" id="app">
+    <div class="title">环境检查</div>
+    <el-table
+        class="checkTable"
+        :data="checkData.env"
+        stripe
+        style="width: 100%">
+        <el-table-column
+        prop="name"
+        label="环境"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="need"
+        label="程序所需"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="current"
+        label="当前服务器">
+        </el-table-column>
+        <el-table-column
+        prop="check"
+        label="是否符合">
+            <template slot-scope="scope">
+                <i class="el-icon-success" style="font-size: 20px; color:#18d56b;" v-if="scope.row.check"></i>
+                <i class="el-icon-error"  style="font-size: 20px; color:crimson;"  v-else></i>
+            </template>
+        </el-table-column>
+    </el-table>
+    <div class="title">目录/文件权限检查</div>
+    <el-table
+        class="checkTable"
+        :data="checkData.permission"
+        stripe
+        style="width: 100%">
+        <el-table-column
+        prop="name"
+        label="环境"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="need"
+        label="程序所需"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="check"
+        label="当前服务器">
+        <template slot-scope="scope">
+            <span v-if="scope.row.check">可写</span>
+            <span v-else>不可写</span>
+        </template>
+        </el-table-column>
+        <el-table-column
+        prop="check"
+        label="是否符合">
+        <template slot-scope="scope">
+            <i class="el-icon-success" style="font-size: 20px; color:#18d56b;" v-if="scope.row.check"></i>
+            <i class="el-icon-error"  style="font-size: 20px; color:crimson;"  v-else></i>
+        </template>
+        </el-table-column>
+    </el-table>
+    <div class="title">函数/类</div>
+    <el-table
+        class="checkTable"
+        :data="checkData.fun"
+        stripe
+        style="width: 100%">
+        <el-table-column
+        prop="name"
+        label="环境"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="need"
+        label="程序所需"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="check"
+        label="当前状态">
+        <template slot-scope="scope">
+            <span v-if="scope.row.check">支持</span>
+            <span v-else>不支持</span>
+        </template>
+        </el-table-column>
+        <el-table-column
+        prop="check"
+        label="是否符合">
+        <template slot-scope="scope">
+            <i class="el-icon-success" style="font-size: 20px; color:#18d56b;" v-if="scope.row.check"></i>
+            <i class="el-icon-error"  style="font-size: 20px; color:crimson;"  v-else></i>
+        </template>
+        </el-table-column>
+    </el-table>
+    <div class="tools">
+        <el-button @click="back" type="primary" plain>上一步</el-button>
+        <el-button :plain="!checked" :disabled="!checked" @click="next" type="primary">下一步</el-button>
+    </div>
+</div>
+<!-- conntent end  -->
+<!-- footer start -->
+<div class="ct footer">
+    © 2021 PADDYSHOP.NET
+</div>
+<!-- footer end -->
+
+</body>
+<script>
+    const BASE_URL = ''
+    new Vue({
+        el: "#app",
+        data: {
+            checked:false,
+            checkData:{
+                env:[],
+                permission:[],
+                fun:[],
+            }
+        },
+        mounted () {
+            this.getCheckData();
+        },
+        methods:{
+            back(){
+                window.history.back(-1);
+            },
+            next(){
+                if(this.checked){
+                    window.location.href = '/install/create.html';
+                }
+                else{
+                    return false;
+                }
+            },
+            getCheckData(){
+                var that = this;
+                axios.post('/index.php?s=/install/index/check',)
+                .then(res => {                    
+                    if(res.data.code == 200){
+                        that.checkData = res.data.data;
+                        that.checked = that.check();
+                        console.log('that.checked',that.checked)
+                    }else{
+                        that.$message.error(res.data.msg);
+                    }
+                })
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
+            },
+            check(){
+                for(var i = 0;i < this.checkData.length;i++){
+                    for(var j = 0;i<this.checkData[i].length;j++){
+                        if(!this.checkData[i][j]['check']){
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+    });
+</script>
+</html>

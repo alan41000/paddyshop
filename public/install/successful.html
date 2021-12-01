@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>PaddyShop安装程序</title>	
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+	<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    
+	<style>
+		.ct{
+			width: 960px;
+			margin: auto;
+			font-size: 14px;
+		}
+		.header{
+			height: 90px;
+			margin-bottom: 20px;			
+			border-bottom: 1px solid #d4d4d4;
+		}
+		.footer{
+			
+		}
+		.title{
+			text-align: center;
+			font-size: 16px;
+		}
+		.agreement{}	
+		.tools{
+			width: 100%;			
+			display: flex;
+			display: -webkit-flex;
+			align-items:center;
+			justify-content:center;
+		}	
+		.tools .btn{
+			display: block;
+			width: 200px;
+			line-height: 2.5;
+			height: 40px;
+			background-color: #409EFF;
+			text-align: center;
+			color: #FFFFFF;
+			border-radius: 5px;
+			text-decoration: none;
+			font-size: 16px;
+			margin: 10px;
+		}
+		.checkTable{
+			width: 100%;
+			line-height: 2;
+			margin: 10px 0px;
+		}
+	</style>
+</head>
+<body>
+	<div class="ct header">
+		<div class="logo"><img src="/static/logo.png" width="150"/></div>
+	</div>
+    <div class="ct" id="app">
+        <div class="title">恭喜您安装成功</div>
+        <div class="box">
+            <el-link href="/admin" target="_blank">后台管理</el-link><br />
+            <p class="tips-sweet">默认后台地址入口为 /admin</p>
+            <p class="admin-hint">默认账号：paddyshop &emsp; 默认密码为：paddyshop</p>
+            <p class="tips-sweet">请尽快修改管理员密码，以防被非法入侵。<br />并删除 /app/install和/public/install目录。</p>
+        </div>
+    </div>
+    <!-- footer start -->
+    <div class="ct footer">
+        © 2021 PADDYSHOP.NET
+    </div>
+    <!-- footer end -->
+</body>
+<script>
+    const BASE_URL = ''
+    new Vue({
+        el: "#app",
+        data: {
+
+        },
+        mounted () {
+            
+        },
+        methods:{
+
+        }
+    });
+</script>
+</html>

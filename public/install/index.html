@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>PaddyShop安装程序</title>	
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+	<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    
+	<style>
+		.ct{
+			width: 960px;
+			margin: auto;
+			font-size: 14px;
+		}
+		.header{
+			height: 90px;
+			margin-bottom: 20px;			
+			border-bottom: 1px solid #d4d4d4;
+		}
+		.footer{
+			
+		}
+		.title{
+			text-align: center;
+			font-size: 16px;
+		}
+		.agreement{}	
+		.tools{
+			width: 100%;			
+			display: flex;
+			display: -webkit-flex;
+			align-items:center;
+			justify-content:center;
+		}	
+		.tools .btn{
+			display: block;
+			width: 200px;
+			line-height: 2.5;
+			height: 40px;
+			background-color: #409EFF;
+			text-align: center;
+			color: #FFFFFF;
+			border-radius: 5px;
+			text-decoration: none;
+			font-size: 16px;
+			margin: 10px;
+		}
+		.checkTable{
+			width: 100%;
+			line-height: 2;
+			margin: 10px 0px;
+		}
+	</style>
+</head>
+<body>
+	<div class="ct header">
+		<div class="logo"><img src="/static/logo.png" width="150"/></div>
+	</div>
+
+    <!-- conntent start  -->
+    <div class="ct agreement" id="app">
+        <div class="title">安装协议</div>
+        <div>
+            <p>尊敬的用户：</p>
+            <div class="hr_8"></div>
+            <p>
+				感谢您选择PaddyShop商城系统，希望我们的努力能为您提供一款适用于企业级电商零售的利器。
+            </p>
+        </div>
+
+        <div class="tools">
+            <el-button @click="agree" type="primary">同 意</el-button>
+        </div>
+    </div>
+    <!-- conntent end  -->
+    <!-- footer start -->
+    <div class="ct footer">
+        © 2021 PADDYSHOP.NET
+    </div>
+    <!-- footer end -->
+
+</body>
+<script>
+    const BASE_URL = ''
+    new Vue({
+        el: "#app",
+        data: {
+            
+        },
+        mounted () {
+            
+        },
+        methods:{
+            agree(){
+                window.location.href='/install/check.html'
+            },            
+        }
+    });
+</script>
+</html>
