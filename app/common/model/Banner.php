@@ -22,4 +22,9 @@ class Banner extends PaddyShop
     {
         return filePathHandle($value);
     }
+
+    public function setImagesUrlAttr($value)
+    {
+        return attachmentPathHandle($value);
+    }
 }

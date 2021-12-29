@@ -201,8 +201,7 @@
                 .then(res => {                    
                     if(res.data.code == 200){
                         that.checkData = res.data.data;
-                        that.checked = that.check();
-                        console.log('that.checked',that.checked)
+                        that.checked = that.check(this.checkData);
                     }else{
                         that.$message.error(res.data.msg);
                     }
@@ -211,14 +210,25 @@
                     console.log(error);
                 });
             },
-            check(){
-                for(var i = 0;i < this.checkData.length;i++){
-                    for(var j = 0;i<this.checkData[i].length;j++){
-                        if(!this.checkData[i][j]['check']){
-                            return false;
-                        }
+            check(checkData){
+                for(var i = 0;i < checkData.env.length;i++){
+                    if(!this.checkData.env[i]['check']){
+                        return false;
                     }
                 }
+
+                for(var i = 0;i < checkData.fun.length;i++){
+                    if(!this.checkData.fun[i]['check']){
+                        return false;
+                    }
+                }
+
+                for(var i = 0;i < checkData.permission.length;i++){
+                    if(!this.checkData.permission[i]['check']){
+                        return false;
+                    }
+                }
+
                 return true;
             }
         }

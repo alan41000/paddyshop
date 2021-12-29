@@ -60,6 +60,12 @@ CREATE TABLE `banner`  (
   INDEX `platform`(`platform`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '轮播图片' ROW_FORMAT = Compact;
 
+INSERT INTO `banner` VALUES (2, '[\"mp-weixin\"]', 1, '/pages/goods/goods?id=1', 'upload/images/banner/20211225/fa8f61b8260d47e02f1fe77b5087cd63.jpg', '防疫物品五折', NULL, 1, 0, 1640420070, 1640423443);
+INSERT INTO `banner` VALUES (3, '[\"mp-weixin\"]', 1, '/', 'upload/images/banner/20211225/d4ab560a5683fa0eaeb36a7d7ed6c713.jpg', '水果慢80送20', NULL, 1, 0, 1640421020, 1640423442);
+INSERT INTO `banner` VALUES (4, '[\"mp-weixin\"]', 1, '/', 'upload/images/banner/20211225/22f68870c8c61bf432ac4e59335fd742.jpg', '广式风味腊肠', NULL, 1, 0, 1640421049, 1640423440);
+INSERT INTO `banner` VALUES (5, '[\"mp-weixin\"]', 1, '/', 'upload/images/banner/20211225/67f272c3029e19dbe48e846af5b08e07.jpg', '国潮面膜', NULL, 1, 0, 1640421121, 1640423438);
+INSERT INTO `banner` VALUES (6, '[\"mp-weixin\"]', 1, '/', 'upload/images/banner/20211225/6b58335b62b27c6754d591dc54338da7.jpg', '5折购机', NULL, 1, 0, 1640421169, 1640423436);
+
 -- ----------------------------
 -- Table structure for cart
 -- ----------------------------
@@ -217,7 +223,7 @@ INSERT INTO `goods_category` VALUES (15, 4, 'upload/images/site/20211129/9611b56
 INSERT INTO `goods_category` VALUES (16, 5, 'upload/images/site/20211129/16870b1a3d7539c8f38e300285f57825.jpg', '美容', NULL, NULL, 0, NULL, 1, 1638106815, 1638196647);
 INSERT INTO `goods_category` VALUES (17, 5, 'upload/images/site/20211129/b9e716fd562c5db42ce9a1f1113278a9.jpg', '内饰', NULL, NULL, 0, NULL, 1, 1638106831, 1638196644);
 INSERT INTO `goods_category` VALUES (18, 5, 'upload/images/site/20211129/9fde600a283bbb8a0601389961de9b29.jpg', '养护', '', '', 0, 0, 1, 1638106857, 1638196641);
-INSERT INTO `goods_category` VALUES (19, 0, NULL, '母婴', NULL, NULL, 1, NULL, 1, 1638106888, 1638106888);
+INSERT INTO `goods_category` VALUES (19, 0, NULL, '母婴', NULL, NULL, 0, NULL, 1, 1638106888, 1638106888);
 INSERT INTO `goods_category` VALUES (20, 19, 'upload/images/site/20211129/9aee479f6ff7d5530001a98b3c0f664d.jpg', '奶粉', NULL, NULL, 0, NULL, 1, 1638106943, 1638196633);
 INSERT INTO `goods_category` VALUES (21, 19, 'upload/images/site/20211129/459d2d36fd9914bd552fc1909bec4c3a.jpg', '尿裤', NULL, NULL, 0, NULL, 1, 1638107012, 1638196629);
 INSERT INTO `goods_category` VALUES (22, 19, 'upload/images/site/20211129/e427243ac25356e54c342da7725f1499.jpg', '辅食', NULL, NULL, 0, NULL, 1, 1638107028, 1638196626);
