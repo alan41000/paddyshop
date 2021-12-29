@@ -26,6 +26,7 @@
 * 后台前端vue：
 * Gitee：https://gitee.com/alan410/paddyshop_admin
 * Github：https://github.com/alan41000/paddyshop_admin
+
 ### 商城基础功能简介
 #### 后端功能列表
 ```
@@ -70,6 +71,26 @@
     > 我的收藏
     > 我的钱包
 ```
+
+#### 推荐环境
+Nignx
+PHP 7.4
+MySQL 5.7
+CentOS 8以上
+推荐使用bt宝塔面板，
+
+#### 安装教程
+1.将源码解压到服务器空间
+2.运行目录设在/public
+3.进行安装 http://域名/install
+4.后台地址：http://域名/admin
+安装完成后建议删除/app/install和/public/install目录。
+
+#### 页面展示
+![小程序](https://paddyshop.oss-cn-shanghai.aliyuncs.com/doc/1.png "小程序")
+![小程序](https://paddyshop.oss-cn-shanghai.aliyuncs.com/doc/2.png "小程序")
+![小程序](https://paddyshop.oss-cn-shanghai.aliyuncs.com/doc/3.png "小程序")
+![小程序](https://paddyshop.oss-cn-shanghai.aliyuncs.com/doc/4.png "小程序")
 
 ### 如何参与项目
 非常欢迎您对PaddyShop的开发作出贡献！
