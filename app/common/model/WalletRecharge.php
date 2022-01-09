@@ -140,9 +140,6 @@ class WalletRecharge extends PaddyShop
         }
 
         return self::transaction(function () use ($params) {
-            // $result = empty($GLOBALS['HTTP_RAW_POST_DATA']) ? $this->xmlToArray(file_get_contents('php://input')) : $this->xmlToArray($GLOBALS['HTTP_RAW_POST_DATA']);
-            file_put_contents('test.txt', json_encode($params['pay']));
-
             // 写入支付日志
             $pay_log_data = [
                 'user_id'       => $params['order']['user_id'],

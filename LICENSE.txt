@@ -1,5 +1,5 @@
 PaddyShop电商系统遵循Apache2开源协议发布，并提供免费使用。
-版权所有Copyright © 2021 by Alan Leung (https://paddyshop.net)
+版权所有Copyright © 2021-2022 by Alan Leung (https://paddyshop.net)
 All rights reserved。
 
 Apache Licence是著名的非盈利开源组织Apache采用的协议。
