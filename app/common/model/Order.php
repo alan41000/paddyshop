@@ -161,8 +161,10 @@ class Order extends PaddyShop
                 }
             }
 
-            // 库存扣除
-
+            // 库存扣除：下单减库存
+            if(config()['paddyshop']['goods_inventory_rules'] == '1'){
+                Goods::inventoryDeduct($order->id);
+            }
 
             // 删除购物车
             if($data['buy_type'] == 'cart')
@@ -462,7 +464,7 @@ class Order extends PaddyShop
                 'total_price'   => $params['order']['total_price'],
                 'trade_no'      => $params['pay']['trade_no'] ?? '',
                 'buyer_user'    => $params['pay']['buyer_user'] ?? '',
-                'pay_price'     => $params['pay']['pay_price'] ?? 0,
+                'pay_price'     => $params['pay']['pay_price'] ?? $params['order']['total_price'],
                 'subject'       => $params['pay']['subject'] ?? '订单支付',
                 'payment_id'    => $params['order']['payment_id'],
                 'business_type' => 1,
@@ -480,8 +482,10 @@ class Order extends PaddyShop
             );
             Order::edit($upd_data);
 
-            // 处理库存
-            Goods::inventoryDeduct($params['order']['id']);
+            // 库存扣除：付款减库存
+            if(config()['paddyshop']['goods_inventory_rules'] == '2'){
+                Goods::inventoryDeduct($params['order']['id']);
+            }
 
             // 增加销量
             Goods::addSalesCount($params['order']['id']);

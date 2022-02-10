@@ -1,0 +1,9 @@
+{
+"AccessKeyID" : "",
+"AccessKeySecret" : "",
+"RoleArn" : "",
+"BucketName" : "",
+"Endpoint" : "",
+"TokenExpireTime" : "900",
+"PolicyFile": "policy/bucket_write_policy.txt"
+}

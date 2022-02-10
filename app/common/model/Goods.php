@@ -381,8 +381,6 @@ class Goods extends PaddyShop
      */    
     public static function inventoryDeduct($order_id)
     {
-        // 库存扣除规则
-
         // 获取订单商品
         $orderInfo = OrderDetail::getAll([
             'where'=>['order_id'=>$order_id],

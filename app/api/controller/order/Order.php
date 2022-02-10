@@ -13,6 +13,7 @@ namespace app\api\controller\order;
 use app\api\controller\PaddyshopApi;
 use app\api\validate\Order as OrderValidate;
 use app\common\model\Order as OrderModel;
+use app\common\model\Goods as GoodsModel;
 use app\common\model\UserMessage as UserMessageModel;
 use think\exception\ValidateException;
 
@@ -265,6 +266,10 @@ class Order extends PaddyshopApi
             $res = OrderModel::edit($cancel_data);
             if($res)
             {
+                // 库存扣除：确认收货减库存
+                if(config()['paddyshop']['goods_inventory_rules'] == '3'){
+                    GoodsModel::inventoryDeduct($id);
+                }
                 return app('JsonOutput')->success();
             }
             else

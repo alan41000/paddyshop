@@ -1,0 +1,12 @@
+{
+  "Statement": [
+    {
+      "Action": [
+        "oss:GetObject"
+      ],
+      "Effect": "Allow",
+      "Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]
+    }
+  ],
+  "Version": "1"
+}

@@ -102,7 +102,18 @@ if (!function_exists('filePathHandle')) {
             {                
                 return $value;
             }
-            return config('paddyshop.website_url').$value;
+            if(config('paddyshop.upload_type') == 'local')
+            {
+                return config('paddyshop.website_url').$value;
+            }
+            else if(config('paddyshop.upload_type') == 'aliyunOss')
+            {
+                return config('paddyshop.upload_type_aliyunoss_endpoint').$value;
+            }
+            else
+            {
+                return $value;
+            }
         }
         return '';
     }
@@ -116,7 +127,22 @@ if (!function_exists('attachmentPathHandle')) {
      */    
     function attachmentPathHandle($value)
     {
-        return empty($value) ? '' : str_replace(config('paddyshop.website_url'), '', $value);
+        if(empty($value)){
+            return '';
+        }else{
+            if(config('paddyshop.upload_type') == 'local')
+            {
+                return str_replace(config('paddyshop.website_url'), '', $value);
+            }
+            else if(config('paddyshop.upload_type') == 'aliyunOss')
+            {
+                return str_replace(config('paddyshop.upload_type_aliyunoss_endpoint'), '', $value);
+            }
+            else
+            {
+                return $value;
+            }
+        }
     }
 }
 

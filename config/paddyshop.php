@@ -28,6 +28,27 @@ return [
     // 网站关闭
     'website_enable'            => cache('common_website_enable'),
 
+    // 库存扣减规则
+    'goods_inventory_rules'     => cache('common_goods_inventory_rules'),
+    
+    // 文件上传类型
+    'upload_type'               => cache('upload_type'),
+
+    // 阿里云OssBucket
+    'upload_type_aliyunoss_bucket'          => cache('upload_type_aliyunoss_bucket'),
+
+    // endpoint
+    'upload_type_aliyunoss_endpoint'        => cache('upload_type_aliyunoss_endpoint'),
+
+    // accessKeyId
+    'upload_type_aliyunoss_accessKeyId'     => cache('upload_type_aliyunoss_accessKeyId'),
+
+    // accessKeySecret
+    'upload_type_aliyunoss_accessKeySecret' => cache('upload_type_aliyunoss_accessKeySecret'),
+
+    // roleArn
+    'upload_type_aliyunoss_roleArn'         => cache('upload_type_aliyunoss_roleArn'),
+
     // 微信公众号AppID
     'weixinh5_appid'            => cache('app_weixinh5_appid'),
 

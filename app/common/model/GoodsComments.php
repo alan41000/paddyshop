@@ -22,6 +22,16 @@ class GoodsComments extends PaddyShop
         'is_reply'      =>  'boolean',
     ];
 
+    public function getImagesAttr($value)
+    {
+        return filePathHandle($value);
+    }
+
+    public function setImagesAttr($value)
+    {
+        return attachmentPathHandle($value);
+    }
+
     /**
      * 关联会员详情
      * @Author: Alan Leung
