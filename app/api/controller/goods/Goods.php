@@ -42,7 +42,10 @@ class Goods extends PaddyshopApi
 
             if(!empty($data) && !empty($data['skuValue']))
             {
-                $data['comments_count'] = GoodsCommentsModel::count(['where'=>['goods_id'=>$id]]);
+                $data['comments_count'] = GoodsCommentsModel::count(['where'=>[
+	                ['goods_id' ,'=', $id],
+	                ['is_show','=',1],
+                ]]);
                 foreach($data['skuValue'] as &$vv)
                 {
                     $vv['image'] = $data['home_recommended_images'];
