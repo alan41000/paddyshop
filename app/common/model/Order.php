@@ -23,6 +23,7 @@ class Order extends PaddyShop
         'collect_time'      =>  'timestamp',
         'close_time'        =>  'timestamp',
         'comments_time'     =>  'timestamp',
+        'pay_time'       =>  'timestamp',
     ];
 
     /**

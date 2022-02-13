@@ -115,7 +115,7 @@ class Order extends PaddyshopApi
 
         $where[]    = ['user_id','=',$this->user['id']];
         if(is_numeric($status)) $where[] = ['status','=',$status];
-        
+        if($status == 4) $where[] = ['user_is_comments','=',0];
         $params     = [
             'current'   =>  $current,
             'size'      =>  $size,
@@ -282,4 +282,48 @@ class Order extends PaddyshopApi
             return app('JsonOutput')->fail($e->getMessage());
         }
     }
+
+	/**
+	 * 订单状态数量统计
+	 * @Author: Alan Leung
+	 */
+	public function  orderCounts()
+	{
+		$result = [0,0,0,0];
+		// 待付款
+		$result[0] = OrderModel::count([
+			'field'   =>  'user_id,status',
+			'where'     =>  [
+				['user_id','=',$this->user['id']],
+				['status','=',1],
+			],
+		]);
+		// 待发货
+		$result[1] =  OrderModel::count([
+			'field'   =>  'user_id,status',
+			'where'     =>  [
+				['user_id','=',$this->user['id']],
+				['status','=',2],
+			],
+		]);
+		// 待收货
+		$result[2] = OrderModel::count([
+			'field'   =>  'user_id,status',
+			'where'     =>  [
+				['user_id','=',$this->user['id']],
+				['status','=',3],
+			],
+		]);
+		// 待评价
+		$result[3] = OrderModel::count([
+			'field'   =>  'user_id,status,user_is_comments',
+			'where'     =>  [
+				['user_id','=',$this->user['id']],
+				['status','=',4],
+				['user_is_comments','=',0],
+			],
+		]);
+
+		return app('JsonOutput')->success($result);
+	}
 }

@@ -40,7 +40,10 @@ class Comments extends PaddyshopApi
             $params = [
                 'current'   =>  $current,
                 'size'      =>  $size,
-                'where'     =>  ['goods_id' => $goodsId],
+                'where'     =>  [
+					['goods_id' ,'=', $goodsId],
+	                ['is_show','=',1],
+                ],
                 'with'      =>  ['userInfo']
             ];
             $result = GoodsCommentsModel::list($params);

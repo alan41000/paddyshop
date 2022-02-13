@@ -22,14 +22,20 @@ class GoodsComments extends PaddyShop
         'is_reply'      =>  'boolean',
     ];
 
+    // 设置json类型字段
+    protected $json = ['images'];
+
+    // 设置JSON数据返回数组
+    protected $jsonAssoc = true;
+
     public function getImagesAttr($value)
     {
-        return filePathHandle($value);
-    }
-
-    public function setImagesAttr($value)
-    {
-        return attachmentPathHandle($value);
+        if(!empty($value)){
+            foreach($value as &$v){
+                $v = filePathHandle($v);
+            }
+        }
+        return$value;
     }
 
     /**
@@ -57,14 +63,14 @@ class GoodsComments extends PaddyShop
             foreach($data['goods'] as $v)
             {
                 $commentData = [
-                    'user_id'       =>  $data['user_id'],
-                    'order_id'      =>  $data['order_id'],
-                    'goods_id'      =>  $v['id'],
-                    'business_type' =>  'order',
-                    'content'       =>  $v['content'],
-                    'images'        =>  isset($v['images'])? $v['images'] : '',
-                    'rating'        =>  $v['rating'],
-                    'is_anonymous'  =>  $data['is_anonymous'] == true ? 1: 0,
+                    'user_id'       => $data['user_id'],
+                    'order_id'      => $data['order_id'],
+                    'goods_id'      => $v['id'],
+                    'business_type' => 'order',
+                    'content'       => $v['content'],
+                    'images'        => $v['images'] ?? '',
+                    'rating'        => $v['rating'],
+                    'is_anonymous'  => $data['is_anonymous'] == true ? 1 : 0,
                 ];
                 GoodsComments::create($commentData);
             }
