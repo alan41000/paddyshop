@@ -36,7 +36,8 @@ class PaddyshopApi extends BaseController
         'search',
         'navlist',
         'wxpaynotify',
-        'apiconfig'
+        'apiconfig',
+	    'wechath5auth'
     ];
 
     /**
@@ -137,6 +138,7 @@ class PaddyshopApi extends BaseController
         {
             // 验证Token
             if (!$this->checkToken()) {
+	            crosHeader();
                 // 未授权，请重新登录(401)
                 die(json_encode(['msg'=>'登录失效，请重新登录！','code'=>401]));
             }

@@ -121,7 +121,7 @@ class User extends PaddyShop
                 'referrer'              => '',
                 'is_delete_time'        => 0,
                 'last_login'            => time(),
-                'last_ip'               => '',
+                'last_ip'               => getRealIP(),
             ];
 
             $userInfo = self::add($user_data);
@@ -145,6 +145,7 @@ class User extends PaddyShop
                 'province'              => $params['province'],
                 'city'                  => $params['city'],
                 'last_login'            => time(),
+                'last_ip'               => getRealIP(),
             ];
 
             if(self::edit($user_data))
@@ -154,4 +155,57 @@ class User extends PaddyShop
             throwException('系统错误');
         }
     }
+
+	public static function wechatH5Auth($params)
+	{
+		// 查询会员是否已注册
+		$userInfo = User::where(['openid_weixin_web'=>$params['raw']['openid']])->find();
+		if(empty($userInfo))
+		{
+			$user_data = [
+				'unionid_weixin'        => $params['raw']['unionid'] ?? '',
+				'openid_weixin_web'     => $params['raw']['openid'],
+				'token'                 => createToken(time()),
+				'token_expire'          => time() + 86400 * 30,
+				'nickname'              => $params['raw']['nickname'],
+				'gender'                => $params['raw']['sex'],
+				'avatar'                => $params['raw']['headimgurl'],
+				'province'              => $params['raw']['province'],
+				'city'                  => $params['raw']['city'],
+				'referrer'              => '',
+				'last_login'            => time(),
+				'last_ip'               => getRealIP(),
+			];
+
+			$userInfo = self::add($user_data);
+			if($userInfo && config()['paddyshop']['wallet_enable'] == '1'){
+				Wallet::createWalletIfNotExist($userInfo['id']);
+			}
+			return $userInfo;
+		}
+		else
+		{
+			if(config()['paddyshop']['wallet_enable'] == '1'){
+				Wallet::createWalletIfNotExist($userInfo['id']);
+			}
+			$user_data = [
+				'id'                    => $userInfo['id'],
+				'unionid_weixin'        => $params['raw']['unionid'] ?? '',
+				'token'                 => createToken(time()),
+				'token_expire'          => time() + 86400 * 30,
+				'nickname'              => $params['raw']['nickname'],
+				'gender'                => $params['raw']['sex'],
+				'avatar'                => $params['raw']['headimgurl'],
+				'province'              => $params['raw']['province'],
+				'city'                  => $params['raw']['city'],
+				'last_login'            => time(),
+			];
+
+			if(self::edit($user_data))
+			{
+				return User::where(['openid_weixin_web'=>$params['raw']['openid']])->find();
+			}
+			throwException('系统错误');
+		}
+	}
 }

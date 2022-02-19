@@ -38,6 +38,7 @@ class Config extends PaddyshopApi
             'upload_type'                    => config()['paddyshop']['upload_type'],
             'upload_type_aliyunoss_bucket'   => config()['paddyshop']['upload_type_aliyunoss_bucket'],
             'upload_type_aliyunoss_endpoint' => config()['paddyshop']['upload_type_aliyunoss_endpoint'],
+	        'weixinh5_appid'                => config()['paddyshop']['weixinh5_appid'],
         ];
 
         return app('JsonOutput')->success($data);

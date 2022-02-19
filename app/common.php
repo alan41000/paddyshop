@@ -262,3 +262,19 @@ if (!function_exists('getClientType')){
         return $clientType;
     }
 }
+
+if (!function_exists('crosHeader')) {
+	/**
+	 * 跨域头
+	 * @Author: Alan Leung
+	 * @Date: 2021-06-23 17:03:01
+	 */
+	function crosHeader()
+	{
+		header("Access-Control-Allow-Credentials:true");
+		header("Access-Control-Max-Age:1800");
+		header("Access-Control-Allow-Methods:GET, POST, PATCH, PUT, DELETE, OPTIONS");
+		header("Access-Control-Allow-Origin: *");
+		header("Access-Control-Allow-Headers:Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-CSRF-TOKEN, X-Requested-With,PaddyShopToken,PaddyShopUserClient");
+	}
+}
