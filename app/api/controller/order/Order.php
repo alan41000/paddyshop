@@ -207,10 +207,12 @@ class Order extends PaddyshopApi
         try{
             $order_id       = getParams('order_id');
             $payment_id     = getParams('payment_id');
+			$isH5   = getParams('isH5');
             $data = [
                 'order_id'          =>  $order_id,
                 'user'              =>  $this->user,
                 'payment_id'        =>  $payment_id,
+	            'isH5'  => empty($isH5) ? false : $isH5,
             ];
             $res = OrderModel::pay($data);
             if($res)
@@ -236,7 +238,14 @@ class Order extends PaddyshopApi
         try{
             // $result = empty($GLOBALS['HTTP_RAW_POST_DATA']) ? xmlToArray(file_get_contents('php://input')) : xmlToArray($GLOBALS['HTTP_RAW_POST_DATA']);
             // file_put_contents('test.txt', json_encode($result));
-            if(OrderModel::notify('Weixin') === true)
+	        $isH5 = getParams('ish5');
+			if(!empty($isH5) && $isH5 == 1){
+				$isH5 = true;
+			}else{
+				$isH5 = false;
+			}
+
+            if(OrderModel::notify('Weixin',$isH5) === true)
             {
                 return xml(['return_code' => 'SUCCESS', 'return_msg' => 'OK']);
             }
@@ -287,7 +296,7 @@ class Order extends PaddyshopApi
 	 * 订单状态数量统计
 	 * @Author: Alan Leung
 	 */
-	public function  orderCounts()
+	public function  getOrderCounts()
 	{
 		$result = [0,0,0,0];
 		// 待付款

@@ -127,4 +127,24 @@ class Auth extends PaddyshopApi
 			return app('JsonOutput')->fail($e->getMessage());
 		}
 	}
+
+	/**
+	 * 获取微信jssdk签名包
+	 * @Author: Alan Leung
+	 */
+	public function getWechatSignPackage()
+	{
+		$config = [
+			'app_id' => config()['paddyshop']['weixinh5_appid'],
+			'secret' => config()['paddyshop']['weixinh5_appsecret'],
+
+			// 指定 API 调用返回结果的类型：array(default)/collection/object/raw/自定义类名
+			'response_type' => 'array',
+		];
+
+		$app = EasyWechat::officialAccount($config);
+		$app->jssdk->buildConfig(['chooseWXPay'], $debug = true, $beta = true, $json = true);
+
+		dump($app);
+	}
 }
