@@ -24,7 +24,18 @@ class Goods extends PaddyShop
 
     public function getContentAttr($value)
     {
-        return empty($value) ? '' : str_replace('src="upload/images', 'src="'.config('paddyshop.website_url').'/upload/images', $value);
+	    if(config('paddyshop.upload_type') == 'local')
+	    {
+		    return empty($value) ? '' : str_replace('src="upload/images', 'src="'.config('paddyshop.website_url').'/upload/images', $value);
+	    }
+	    else if(config('paddyshop.upload_type') == 'aliyunOss')
+	    {
+		    return empty($value) ? '' : str_replace('src="upload/images', 'src="'.config('paddyshop.upload_type_aliyunoss_endpoint'), $value);
+	    }
+	    else
+	    {
+		    return empty($value) ? '' : str_replace('src="upload/images', 'src="'.config('paddyshop.website_url').'/upload/images', $value);
+	    }
     }
 
     public function setContentAttr($value)
