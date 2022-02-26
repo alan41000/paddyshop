@@ -22,4 +22,13 @@ class OrderDetail extends PaddyShop
     {
         return attachmentPathHandle($value);
     }
+
+	/**
+	 * 关联会员详情
+	 * @Author: Alan Leung
+	 */
+	public function userInfo()
+	{
+		return $this->hasOne('user', 'id', 'user_id')->bind(['nickname', 'avatar']);
+	}
 }

@@ -38,7 +38,8 @@ class PaddyshopApi extends BaseController
         'wxpaynotify',
         'apiconfig',
 	    'wechath5auth',
-	    'getwechatsignpackage'
+	    'getwechatsignpackage',
+	    'orderrecordbarrage'
     ];
 
     /**

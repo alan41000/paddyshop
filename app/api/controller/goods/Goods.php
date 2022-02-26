@@ -15,6 +15,7 @@ use app\common\model\Goods as GoodsModel;
 use app\common\model\GoodsCategory as GoodsCategoryModel;
 use app\common\model\GoodsCategoryJoin as GoodsCategoryJoinModel;
 use app\common\model\GoodsComments as GoodsCommentsModel;
+use app\common\model\OrderDetail as OrderDetailModel;
 
 class Goods extends PaddyshopApi
 {
@@ -154,4 +155,25 @@ class Goods extends PaddyshopApi
             return app('JsonOutput')->fail($e->getMessage());
         }
     }
+
+	/**
+	 * 商品购买记录弹幕
+	 * @Author: Alan Leung
+	 */
+	public function  orderRecordBarrage(int $id)
+	{
+		try{
+			$params = [
+				'where' => ['goods_id'=>$id],
+				'field' => 'user_id,goods_id,create_time',
+				'group' => 'user_id',
+				'with'  => ['UserInfo']
+			];
+			$res  = OrderDetailModel::getAll($params);
+
+			return app('JsonOutput')->success($res);
+		}catch (\Exception $e){
+			return app('JsonOutput')->fail($e->getMessage());
+		}
+	}
 }
