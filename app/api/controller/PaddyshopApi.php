@@ -39,7 +39,8 @@ class PaddyshopApi extends BaseController
         'apiconfig',
 	    'wechath5auth',
 	    'getwechatsignpackage',
-	    'orderrecordbarrage'
+	    'orderrecordbarrage',
+	    'getgoodsrecommend'
     ];
 
     /**

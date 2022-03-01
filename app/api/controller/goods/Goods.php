@@ -77,6 +77,17 @@ class Goods extends PaddyshopApi
             'with'  => ['GoodsList']
         ];
         $data = GoodsCategoryModel::getAll($params);
+		if(!empty($data)){
+			foreach($data as $k=>&$v){
+				if(!empty($v['GoodsList'])){
+					foreach ($v['GoodsList'] as $kk=>&$vv){
+						if($vv['is_home_recommended'] !== true){
+							unset($data[$k]['GoodsList'][$kk]);
+						}
+					}
+				}
+			}
+		}
         return app('JsonOutput')->success($data);
     }
 
@@ -169,11 +180,33 @@ class Goods extends PaddyshopApi
 				'group' => 'user_id',
 				'with'  => ['UserInfo']
 			];
-			$res  = OrderDetailModel::getAll($params);
-
+			$res  = OrderDetailModel::orderRecordBarrage($params);
+			if(!empty($res)){
+				foreach ($res as &$v){
+					$v['nickname'] = mb_substr($v['nickname'],0,2).'*****';
+				}
+			}
 			return app('JsonOutput')->success($res);
 		}catch (\Exception $e){
 			return app('JsonOutput')->fail($e->getMessage());
 		}
+	}
+
+	/**
+	 * 获取推荐商品
+	 * @Author: Alan Leung
+	 */
+	public  function  getGoodsRecommend()
+	{
+		$params = [
+			'where' => [
+				['is_home_recommended','=',1]
+			],
+			'field' => 'id,title,price,original_price,home_recommended_images,is_home_recommended'
+		];
+		$res = GoodsModel::getAll($params)->toArray();
+		// 乱序
+		shuffle($res);
+		return app('JsonOutput')->success($res);
 	}
 }

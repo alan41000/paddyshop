@@ -31,4 +31,19 @@ class OrderDetail extends PaddyShop
 	{
 		return $this->hasOne('user', 'id', 'user_id')->bind(['nickname', 'avatar']);
 	}
+
+	/**
+	 * 商品购买记录弹幕
+	 * @Author: Alan Leung
+	 */
+	public static function  orderRecordBarrage($params)
+	{
+		$field = $params['field'];
+		$where = $params['where'];
+		$with = $params['with'];
+		$order = 'id desc';
+		$group = $params['group'];
+		$result = (new static)->with($with)->where($where)->field($field)->order($order)->limit(10)->group($group)->select();
+		return $result;
+	}
 }
