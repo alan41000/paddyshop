@@ -43,6 +43,16 @@ class Goods extends PaddyShop
         return attachmentPathHandle($value);
     }
 
+	public function getVideoAttr($value)
+	{
+		return filePathHandle($value);
+	}
+
+	public function setVideoAttr($value)
+	{
+		return attachmentPathHandle($value);
+	}
+
     /**
      * 关联规格属性
      * @Author: Alan Leung

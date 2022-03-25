@@ -35,30 +35,35 @@ class Order extends PaddyshopApi
      */
     public function confirm()
     {
-        // $goods = [
-        //     [
-        //         'goods_id'       =>  14,
-        //         'sku_value_id'   =>  88,
-        //         'qty'            =>  3,
-        //     ],
-        //     [
-        //         'goods_id'       =>  13,
-        //         'sku_value_id'   =>  88,
-        //         'qty'            =>  3,
-        //     ],
-        // ];
-        // dump json_encode($goods);die;
-        $goods    = json_decode(getParams('goods'),true);
-        $buy_type = getParams('buy_type');
-        $coupon   = getParams('coupon');
+		try{
+	        // $goods = [
+	        //     [
+	        //         'goods_id'       =>  14,
+	        //         'sku_value_id'   =>  88,
+	        //         'qty'            =>  3,
+	        //     ],
+	        //     [
+	        //         'goods_id'       =>  13,
+	        //         'sku_value_id'   =>  88,
+	        //         'qty'            =>  3,
+	        //     ],
+	        // ];
+	        // dump json_encode($goods);die;
+	        $goods    = json_decode(getParams('goods'),true);
+	        $buy_type = getParams('buy_type');
+	        $coupon   = getParams('coupon');
 
-        $data     = [
-            'goods'     => $goods,
-            'buy_type'  => $buy_type,
-            'user'      => $this->user,
-            'coupon'    => $coupon,
-        ];
-        return OrderModel::confirm($data);
+	        $data     = [
+	            'goods'     => $goods,
+	            'buy_type'  => $buy_type,
+	            'user'      => $this->user,
+	            'coupon'    => $coupon,
+	        ];
+			$res =  OrderModel::confirm($data);
+			return app('JsonOutput')->success($res);
+		}catch (\Exception $e){
+			return app('JsonOutput')->fail($e->getMessage());
+		}
     }
 
     /**

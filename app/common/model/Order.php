@@ -87,6 +87,14 @@ class Order extends PaddyShop
         }
 
         $total_price = self::calculatePrice($goods);
+
+	    // 优惠券校验
+	    if(!empty($data['coupon'])){
+		    CouponUser::checkUse($data['coupon'],$total_price);
+	    }
+
+		$preferential_price = self::calculatePreferentialPrice($data,$total_price);
+	    $increase_price = 0;
         
         // 订单主信息
         $order_data = [
@@ -94,10 +102,10 @@ class Order extends PaddyShop
             'user_id'               => $data['user']['id'],
             'user_note'             => $data['user_note'],
             'status'                => 1,
-            'preferential_price'    => 0,
-            'increase_price'        => 0,
+            'preferential_price'    => $preferential_price,
+            'increase_price'        => $increase_price,
             'price'                 => $total_price,
-            'total_price'           => $total_price,
+            'total_price'           => ($total_price - $preferential_price) <= 0 ? 0 : $total_price - $preferential_price,
             'extension_data'        => '',
             'payment_id'            => $data['payment_id'],
             'qty_total'             => array_sum(array_column(array_column($goods, 'skuValue_selected'),'qty')),
@@ -173,6 +181,13 @@ class Order extends PaddyShop
                 Cart::del(array_column($data['goods'],'id'),$data['user']['id']);
             }
 
+			// 优惠券处理
+	        CouponUser::edit([
+		        ['id','=',$data['coupon']['couponUser_id']],
+		        ['use_time','=',time()],
+		        ['order_id','=',$order->id],
+	        ]);
+
             // 订单提交成功
             self::commit();
             return $order->toArray();
@@ -182,8 +197,6 @@ class Order extends PaddyShop
             self::rollback();
             return $e->getMessage();
         }
-        
-        return false;
     }
 
     /**
@@ -209,39 +222,54 @@ class Order extends PaddyShop
 
                 // 默认
                 default :
-                    return app('JsonOutput')->fail('参数有误！');
+					throwException('参数有误！');
             }
         } else {
-            return app('JsonOutput')->fail('参数有误！');
+	        throwException('参数有误！');
         }
         
         // 计算价格信息
-        if($goods && !empty($goods))
-        {            
-            $total_price = self::calculatePrice($goods);
+        if(!empty($goods))
+        {
+			// 当前用户可用的优惠券
+	        $coupon_list = CouponUser::getAll(['where'=>[
+				['user_id','=',$data['user']['id']],
+		        ['use_time','=',0],
+		        ['start_time','>=',time()],
+		        ['end_time','<',time()],
+	        ]]);
+			// 满足订单使用条件的优惠券
+	        $coupon_list = CouponUser::isInApplyRange($coupon_list, array_column($goods,'goods_id'));
+			// 计算订单总价
+	        $total_price = self::calculatePrice($goods);
+			// 计算优惠价
+	        $preferential_price = self::calculatePreferentialPrice($data,$total_price);
+			// 增加的价格
+			$increase_price = 0;
+			// 价格打包数据
             $price_data = [
                 // 总价
                 'total_price'           => $total_price,
 
                 // 订单实际支付金额(已减去优惠金额, 已加上增加金额)
-                'actual_price'          => $total_price,
+                'actual_price'          => ($total_price - $preferential_price + $increase_price) < 0 ? 0 : $total_price - $preferential_price + $increase_price ,
 
                 // 优惠金额
-                'preferential_price'    => 0.00,
+                'preferential_price'    => $preferential_price,
 
                 // 增加金额
-                'increase_price'        => 0.00,
+                'increase_price'        => $increase_price,
             ];
 
             // 返回数据
             $result = [
                 'goods_list'                => $goods,      // 商品清单
                 'price_data'                => $price_data, // 优惠金额，总金额，增加金额，订单实际支付金额
+	            'coupon_list'               => $coupon_list,
             ];
-            return app('JsonOutput')->success($result);
+			return  $result;
         }
-
-        return app('JsonOutput')->fail('参数有误！');
+	    throwException('参数有误！');
     }
 
     public static function confirmByGoods($data = [])
@@ -327,6 +355,37 @@ class Order extends PaddyShop
         }
         return $total_price;
     }
+
+	/**
+	 * 计算优惠价格
+	 * @Author: Alan Leung
+	 * @param {*} $goods
+	 */
+	public  static  function  calculatePreferentialPrice($params,$total_price)
+	{
+		$preferentialPrice = 0;
+
+		// 优惠券
+		if(!empty($params['coupon']['coupon_id'])){
+			$coupon = Coupon::getOne([
+				'where' => [
+					['id','=',$params['coupon_id']],
+				]
+			]);
+			if(empty($coupon)){
+				throwException('优惠券数据有误');
+			}
+			// 满减券
+			if($coupon['type'] == 0 && $total_price >= $coupon['min_order_price']){
+				$preferentialPrice = $coupon['value'];
+			}
+			// 折扣券
+			if($coupon['type'] == 1){
+				$preferentialPrice = $total_price * ((10 - $coupon['value']) / 100);
+			}
+		}
+		return $preferentialPrice;
+	}
 
     /**
      * 编辑订单
