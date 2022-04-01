@@ -15,13 +15,18 @@ class Coupon extends PaddyShop
 {
 	protected $type = [
 		'value'      =>  'float',
-		'start_time'      =>  'timestamp',
-		'end_time'     =>  'timestamp',
+		'start_time'      =>  'timestamp:Y-m-d',
+		'end_time'     =>  'timestamp:Y-m-d',
 		 'is_enable'       =>  'boolean',
 		 'is_user_receive'      =>  'boolean',
 		 'is_reg_send'        =>  'boolean',
 		'apply_range_config'    => 'array',
 	];
+
+	public function setEndTimeAttr($value)
+	{
+		return strtotime($value) + 86399; //往后加一天减一秒
+	}
 
 	/**
 	 * 商品可用优惠券列表

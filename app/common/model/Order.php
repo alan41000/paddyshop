@@ -90,7 +90,7 @@ class Order extends PaddyShop
 
 	    // 优惠券校验
 	    if(!empty($data['coupon'])){
-		    CouponUser::checkUse($data['coupon'],$total_price);
+		    CouponUser::checkUse($data,$total_price);
 	    }
 
 		$preferential_price = self::calculatePreferentialPrice($data,$total_price);
@@ -183,9 +183,9 @@ class Order extends PaddyShop
 
 			// 优惠券处理
 	        CouponUser::edit([
-		        ['id','=',$data['coupon']['couponUser_id']],
-		        ['use_time','=',time()],
-		        ['order_id','=',$order->id],
+				'id' => $data['coupon']['coupon_user_id'],
+				'use_time' => time(),
+				'order_id' => $order->id,
 	        ]);
 
             // 订单提交成功
@@ -232,16 +232,18 @@ class Order extends PaddyShop
         if(!empty($goods))
         {
 			// 当前用户可用的优惠券
-	        $coupon_list = CouponUser::getAll(['where'=>[
-				['user_id','=',$data['user']['id']],
-		        ['use_time','=',0],
-		        ['start_time','>=',time()],
-		        ['end_time','<',time()],
-	        ]]);
-			// 满足订单使用条件的优惠券
-	        $coupon_list = CouponUser::isInApplyRange($coupon_list, array_column($goods,'goods_id'));
-			// 计算订单总价
+	        $coupon_list = CouponUser::getAll([
+				'where'=>[
+					['user_id','=',$data['user']['id']],
+			        ['use_time','=',0],
+			        ['start_time','<=',time()],
+			        ['end_time','>',time()],
+		        ],
+				'with'=>['couponInfo']])->toArray();
+	        // 计算订单总价
 	        $total_price = self::calculatePrice($goods);
+	        // 满足订单使用条件的优惠券
+	        $coupon_list = CouponUser::isInApplyRange($coupon_list, array_column($goods,'goods_id'),$total_price);
 			// 计算优惠价
 	        $preferential_price = self::calculatePreferentialPrice($data,$total_price);
 			// 增加的价格
@@ -252,10 +254,10 @@ class Order extends PaddyShop
                 'total_price'           => $total_price,
 
                 // 订单实际支付金额(已减去优惠金额, 已加上增加金额)
-                'actual_price'          => ($total_price - $preferential_price + $increase_price) < 0 ? 0 : $total_price - $preferential_price + $increase_price ,
+                'actual_price'          => ($total_price - number_format($preferential_price,2) + $increase_price) < 0 ? 0 : number_format($total_price - number_format($preferential_price,2) + $increase_price,2) ,
 
                 // 优惠金额
-                'preferential_price'    => $preferential_price,
+                'preferential_price'    => number_format($preferential_price,2),
 
                 // 增加金额
                 'increase_price'        => $increase_price,
@@ -369,7 +371,7 @@ class Order extends PaddyShop
 		if(!empty($params['coupon']['coupon_id'])){
 			$coupon = Coupon::getOne([
 				'where' => [
-					['id','=',$params['coupon_id']],
+					['id','=',$params['coupon']['coupon_id']],
 				]
 			]);
 			if(empty($coupon)){
@@ -381,7 +383,7 @@ class Order extends PaddyShop
 			}
 			// 折扣券
 			if($coupon['type'] == 1){
-				$preferentialPrice = $total_price * ((10 - $coupon['value']) / 100);
+				$preferentialPrice = $total_price * ((10 - $coupon['value']) / 10);
 			}
 		}
 		return $preferentialPrice;

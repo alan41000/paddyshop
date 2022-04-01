@@ -16,8 +16,8 @@ use think\Exception;
 class CouponUser extends PaddyShop
 {
 	protected $type = [
-		'start_time'      =>  'timestamp',
-		'end_time'     =>  'timestamp',
+		'start_time'      =>   'timestamp:Y-m-d',
+		'end_time'     =>   'timestamp:Y-m-d',
 		'use_time'        =>  'timestamp',
 	];
 
@@ -38,7 +38,7 @@ class CouponUser extends PaddyShop
 	 */
 	public function userInfo()
 	{
-		return $this->hasOne('User', 'id', 'user_id')->field('id,user_no,birthday,address,avatar,nickname,mobile');
+		return $this->hasOne('User', 'id', 'user_id')->field('id,birthday,address,avatar,nickname,mobile');
 	}
 
 	/**
@@ -48,7 +48,7 @@ class CouponUser extends PaddyShop
 	public static function checkReceive($data)
 	{
 		// 获取优惠劵信息
-		$coupon = self::getOne(['where' => ['coupon_id'=>$data['coupon_id']]]);
+		$coupon = Coupon::getOne(['where' => ['id'=>$data['coupon_id']]]);
 		if(empty($coupon) || !$coupon['is_enable'])
 		{
 			throwException('优惠劵不存在或已删除');
@@ -56,22 +56,7 @@ class CouponUser extends PaddyShop
 
 		if($coupon['total_count'] > 0 && $coupon['sent_count'] >= $coupon['total_count'])
 		{
-			throwException('优惠劵不存在或已删除');
-		}
-
-		// 是否已过期
-		switch($coupon['expire_type'])
-		{
-			// 固定日期
-			case 1 :
-				if($coupon['end_time'] < time())
-				{
-					throwException('优惠劵已过期');
-				}
-				break;
-
-			default :
-				throwException('优惠劵过期类型有误');
+			throwException('优惠券已抢光');
 		}
 
 		// 用户领取
@@ -84,7 +69,7 @@ class CouponUser extends PaddyShop
 		$coupon_user = CouponUser::getOne([
 			'where'=>[
 				['user_id','=',$data['user_id']],
-				['coupon_id','=',$data['id']],
+				['coupon_id','=',$data['coupon_id']],
 			]
 		]);
 		if(!empty($coupon_user))
@@ -104,13 +89,21 @@ class CouponUser extends PaddyShop
 //		$coupon = Coupon::getOne(['where'=>['id' => $data['coupon_id']]]);
 //		if(empty($coupon)) throwException('优惠券信息有误');
 
-		$couponUser = CouponUser::getOne(['where'=>['id' => $data['couponUser_id']]]);
+		$couponUser = CouponUser::getOne([
+				'where'=>['id' => $data['coupon']['coupon_user_id']],
+				'with'=>['couponInfo'],
+		]);
 		if(empty($couponUser)) throwException('优惠券信息有误');
-		if($couponUser['use_time'] > 0) throwException('优惠券已使用过');
-		if($couponUser['start_time'] > time() || $couponUser['end_time'] < time()) throwException('优惠券超出使用期限');
-		$applyRangeCheck = CouponUser::isInApplyRange([$data['couponUser_id']],$data['goods'],$total_price);
+		if($couponUser['use_time'] > 0) throwException('优惠券已被使用');
+		if(strtotime($couponUser['start_time']) > time() || strtotime($couponUser['end_time']) < time()) throwException('优惠券超出使用期限');
+
+		foreach ($data['goods'] as $v){
+			$applyRangeCheck = CouponUser::isInApplyRange([$couponUser],$v['goods_id'],$total_price);
+			if(!empty($applyRangeCheck)){
+				return true;
+			}
+		}
 		if(empty($applyRangeCheck)) throwException('当前订单不可使用此优惠券');
-		return true;
 	}
 
 	/**
@@ -122,7 +115,6 @@ class CouponUser extends PaddyShop
 			// 获取优惠券信息
 			$coupon = Coupon::getOne(['where'=>['id' => $data['coupon_id']]]);
 			if(empty($coupon)) throwException('优惠券信息有误');
-
 			return self::transaction(function () use ($data,$coupon) {
 				$coupon_user = [
 					'coupon_id'  => $data['coupon_id'],
@@ -155,24 +147,24 @@ class CouponUser extends PaddyShop
 	{
 		foreach ($couponList as $k=>$v) {
 			// 不满足满减条件
-			if($totalPrice < $v['min_order_price']){
+			if($totalPrice < $v['couponInfo']['min_order_price']){
 				unset($couponList[$k]);
 				continue;
 			}
-			switch ($v['apply_range']){
+			switch ($v['couponInfo']['apply_range']){
 				case 1:
 					$goods_category_ids = [];
 					foreach ($goodsIds as $vg){
 						$res = GoodsCategoryJoin::getAll(['where'=>['goods_id'=>$vg]]);
 						$goods_category_ids = array_merge($res,$goods_category_ids);
 					}
-					if(empty(array_intersect(array_unique($goods_category_ids),$v['apply_range_config']))){
+					if(empty(array_intersect(array_unique($goods_category_ids),$v['couponInfo']['apply_range_config']))){
 						unset($couponList[$k]);
 					}
 					break;
 
 				case 2:
-					$applyGoodsIds = array_intersect($v['apply_range_config'], $goodsIds);
+					$applyGoodsIds = array_intersect($v['couponInfo']['apply_range_config'], $goodsIds);
 					if(empty($applyGoodsIds)){
 						unset($couponList[$k]);
 					}
@@ -182,7 +174,7 @@ class CouponUser extends PaddyShop
 					break;
 			}
 		}
-		return $couponList;
+		return array_values($couponList);
 	}
 
 }

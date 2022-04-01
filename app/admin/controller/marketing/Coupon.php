@@ -60,8 +60,8 @@ class Coupon extends PaddyshopAdmin
 		$value      = $type == 0 ? getParams('value_price') : getParams('value_rate');
 		$expire_type    = getParams('expire_type');
 		$expire_hour            = getParams('expire_hour');
-		$start_time    = getParams('start_time');
-		$end_time         = getParams('end_time');
+		$start_time    = getParams('expire_time');
+		$end_time         = getParams('expire_time');
 		$apply_range      = getParams('apply_range');
 		if($apply_range == 1){
 			$apply_range_config      =  getParams('category_ids');
@@ -83,7 +83,7 @@ class Coupon extends PaddyshopAdmin
 			'type'   =>  $type,
 			'value'      =>  $value,
 			'expire_type'   =>  $expire_type,
-			'expire_hour'           =>  $expire_hour,
+			'expire_hour'           =>  empty($expire_hour) ? 0 : $expire_hour,
 			'start_time'   =>  empty($start_time) ? '1970-01-01 08:00:00' : $start_time[0],
 			'end_time'        =>  empty($end_time) ? '1970-01-01 08:00:00' : $end_time[1],
 			'apply_range'        =>  $apply_range,
@@ -146,7 +146,7 @@ class Coupon extends PaddyshopAdmin
 			'type'   =>  $type,
 			'value'      =>  $value,
 			'expire_type'   =>  $expire_type,
-			'expire_hour'           =>  $expire_hour,
+			'expire_hour'           =>  empty($expire_hour) ? 0 : $expire_hour,
 			'start_time'   =>  empty($start_time) ? '1970-01-01 08:00:00' : $start_time[0],
 			'end_time'        =>  empty($end_time) ? '1970-01-01 08:00:00' : $end_time[1],
 			'apply_range'        =>  $apply_range,
