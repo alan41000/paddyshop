@@ -312,9 +312,10 @@ class Goods extends PaddyShop
     {
         $field = empty($params['field']) ? '*' : $params['field'];
         $where = empty($params['where']) ? [] : $params['where'];
-        $order = empty($params['order']) ? 'id desc' : $params['order'];        
+        $order = empty($params['order']) ? 'id desc' : $params['order'];
+	    $limit = empty($params['limit']) ? 0 : $params['limit'];
 
-        $goods = Goods::where($where)->with(['skuValue','skuAttribute','goodsCategory','goodsImages'])->field($field)->order($order)->select();
+        $goods = Goods::where($where)->with(['skuValue','skuAttribute','goodsCategory','goodsImages'])->field($field)->order($order)->limit($limit)->select();
         return $goods;
     }
 

@@ -5873,6 +5873,19 @@ CREATE TABLE `user_message`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户消息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for user_search
+-- ----------------------------
+DROP TABLE IF EXISTS `user_search`;
+CREATE TABLE `user_search` (
+                               `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+                               `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
+                               `keyword` varchar(255) DEFAULT NULL COMMENT '关键词',
+                               `create_time` int(11) unsigned DEFAULT '0' COMMENT '添加时间',
+                               `update_time` int(11) unsigned DEFAULT NULL COMMENT '编辑时间',
+                               PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='用户搜索记录';
+
+-- ----------------------------
 -- Table structure for wallet
 -- ----------------------------
 DROP TABLE IF EXISTS `wallet`;
@@ -5978,5 +5991,67 @@ CREATE TABLE `wallet_withdraw_channel`  (
   `update_time` int(11) UNSIGNED NOT NULL COMMENT '编辑时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '提现方式' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for goods_history
+-- ----------------------------
+DROP TABLE IF EXISTS `goods_history`;
+CREATE TABLE `goods_history` (
+                                 `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+                                 `goods_id` int(11) unsigned NOT NULL COMMENT '商品id',
+                                 `user_id` int(11) unsigned NOT NULL COMMENT '用户id',
+                                 `create_time` int(11) unsigned NOT NULL COMMENT '添加时间',
+                                 `update_time` int(11) unsigned NOT NULL COMMENT '编辑时间',
+                                 PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT='商品足迹';
+
+-- ----------------------------
+-- Table structure for coupon
+-- ----------------------------
+DROP TABLE IF EXISTS `coupon`;
+CREATE TABLE `coupon` (
+                          `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+                          `name` varchar(30) NOT NULL DEFAULT '' COMMENT '名称',
+                          `desc` varchar(60) NOT NULL DEFAULT '' COMMENT '描述',
+                          `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '优惠券类型（0满减劵, 1折扣劵）',
+                          `value` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '减免金额 | 折扣系数 0-10，9.5代表9.5折',
+                          `expire_type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '到期类型（0领取生效, 1固定日期）',
+                          `expire_hour` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '有效小时（单位 时）',
+                          `start_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '限时开始时间',
+                          `end_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '限时结束时间',
+                          `min_order_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '订单最低金额',
+                          `apply_range` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '适用范围(0全部商品 1商品分类 2指定商品)',
+                          `apply_range_config` text COMMENT '关联商品分类id 或 关联商品id（以json存储）',
+                          `total_qty` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '限制发放总数量（0则不限）',
+                          `receive_qty` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '已发放总数量',
+                          `sort` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
+                          `is_enable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否启用（0否，1是）',
+                          `is_user_receive` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否开放用户领取（0否, 1是）',
+                          `is_reg_send` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否注册即发放（0否, 1是）',
+                          `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '添加时间',
+                          `update_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+                          PRIMARY KEY (`id`),
+                          KEY `type` (`type`),
+                          KEY `is_enable` (`is_enable`),
+                          KEY `sort` (`sort`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='优惠券';
+
+-- ----------------------------
+-- Table structure for coupon_user
+-- ----------------------------
+CREATE TABLE `coupon_user` (
+                               `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+                               `coupon_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '优惠券id',
+                               `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
+                               `start_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '有效开始时间',
+                               `end_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '有效结束时间',
+                               `order_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '使用关联的订单id',
+                               `use_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '使用时间',
+                               `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '添加时间',
+                               `update_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+                               PRIMARY KEY (`id`),
+                               KEY `coupon_id` (`coupon_id`),
+                               KEY `user_id` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='用户优惠券';
 
 SET FOREIGN_KEY_CHECKS = 1;

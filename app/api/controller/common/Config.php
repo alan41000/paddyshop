@@ -35,6 +35,7 @@ class Config extends PaddyshopApi
             'website_url'                    => config()['paddyshop']['website_url'],
             'website_logo'                   => config()['paddyshop']['website_logo'],
             'website_icon'                   => config()['paddyshop']['website_icon'],
+            'website_hotsearch'                   => config()['paddyshop']['website_hotsearch'],
             'upload_type'                    => config()['paddyshop']['upload_type'],
             'upload_type_aliyunoss_bucket'   => config()['paddyshop']['upload_type_aliyunoss_bucket'],
             'upload_type_aliyunoss_endpoint' => config()['paddyshop']['upload_type_aliyunoss_endpoint'],

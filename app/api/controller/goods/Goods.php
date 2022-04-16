@@ -15,6 +15,8 @@ use app\common\model\Goods as GoodsModel;
 use app\common\model\GoodsCategory as GoodsCategoryModel;
 use app\common\model\GoodsCategoryJoin as GoodsCategoryJoinModel;
 use app\common\model\GoodsComments as GoodsCommentsModel;
+use app\common\model\GoodsHistory as GoodsHistoryModel;
+use app\common\model\UserSearch as UserSearchModel;
 use app\common\model\OrderDetail as OrderDetailModel;
 
 class Goods extends PaddyshopApi
@@ -52,6 +54,12 @@ class Goods extends PaddyshopApi
                     $vv['image'] = $data['home_recommended_images'];
                 }
             }
+
+			//商品足迹
+	        if(!empty($data) && $this->token)
+	        {
+		        GoodsHistoryModel::add(['goods_id'=>$id,'token'=>$this->token]);
+	        }
 
             return app('JsonOutput')->success($data);
         }
@@ -145,6 +153,11 @@ class Goods extends PaddyshopApi
                         'order' => $order,
                     ]
                 );
+	            //搜索历史
+	            if(!empty($data) && $this->token)
+	            {
+		            UserSearchModel::add(['keyword'=>$keyword,'token'=>$this->token]);
+	            }
                 return app('JsonOutput')->success($data);
             }
 

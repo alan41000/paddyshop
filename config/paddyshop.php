@@ -28,6 +28,9 @@ return [
     // 网站关闭
     'website_enable'            => cache('common_website_enable'),
 
+	// 网站热搜关键词
+    'website_hotsearch'              => cache('common_website_hotsearch'),
+
     // 库存扣减规则
     'goods_inventory_rules'     => cache('common_goods_inventory_rules'),
     
