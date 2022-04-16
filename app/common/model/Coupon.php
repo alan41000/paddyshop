@@ -61,4 +61,27 @@ class Coupon extends PaddyShop
 		}
 		return array_values($couponList);
 	}
+
+	/**
+	 * 字段更新
+	 * @Author: Alan Leung
+	 */
+	public static function fieldUpdate($data)
+	{
+		$coupon = Coupon::find($data['id']);
+		if(!empty($coupon))
+		{
+			$data = [
+				'id'            =>  $data['id'],
+				$data['field']  =>  $data['params']
+			];
+			$coupon = Coupon::update($data,['id'=>$data['id']]);
+			if($coupon)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

@@ -44,7 +44,7 @@ class Coupon extends PaddyshopAdmin
 		$params = [
 			'current'   =>  $current,
 			'size'      =>  $size,
-//			'where'     =>  $this->whereBuilder(),
+			'where'     =>  $this->whereBuilder(),
 		];
 		$result             = CouponModel::list($params);
 
@@ -206,9 +206,13 @@ class Coupon extends PaddyshopAdmin
 	private function whereBuilder()
 	{
 		$name = getParams('name');
+		$type = getParams('type');
 		$where = [];
 		if(!empty($name)){
 			$where[] = ['name','like','%'.$name.'%'];
+		}
+		if(is_numeric($type)){
+			$where[] = ['type','=',$type];
 		}
 		return $where;
 	}
@@ -239,6 +243,65 @@ class Coupon extends PaddyshopAdmin
 		} catch (\Exception $e) {
 			return app('JsonOutput')->fail($e->getMessage());
 		}
+	}
 
+	public  function  setIsRegSend()
+	{
+		$id         = getParams('id');
+		$params     = getParams('params');
+		$data       = ['id'=>$id, 'field'=>'is_reg_send','params'=>$params];
+		try {
+			validate(CouponValidate::class)->scene('fieldUpdate')->check($data);
+			if(CouponModel::fieldUpdate($data))
+			{
+				return app('JsonOutput')->success();
+			}
+			else
+			{
+				return app('JsonOutput')->fail();
+			}
+		} catch (ValidateException $e) {
+			return app('JsonOutput')->fail($e->getError());
+		}
+	}
+
+	public  function  setIsEnable()
+	{
+		$id         = getParams('id');
+		$params     = getParams('params');
+		$data       = ['id'=>$id, 'field'=>'is_enable','params'=>$params];
+		try {
+			validate(CouponValidate::class)->scene('fieldUpdate')->check($data);
+			if(CouponModel::fieldUpdate($data))
+			{
+				return app('JsonOutput')->success();
+			}
+			else
+			{
+				return app('JsonOutput')->fail();
+			}
+		} catch (ValidateException $e) {
+			return app('JsonOutput')->fail($e->getError());
+		}
+	}
+
+	public  function  setIsUserReceive()
+	{
+		$id         = getParams('id');
+		$params     = getParams('params');
+		$data       = ['id'=>$id, 'field'=>'is_user_receive','params'=>$params];
+		try {
+			validate(CouponValidate::class)->scene('fieldUpdate')->check($data);
+			if(CouponModel::fieldUpdate($data))
+			{
+				return app('JsonOutput')->success();
+			}
+			else
+			{
+				return app('JsonOutput')->fail();
+			}
+		} catch (ValidateException $e) {
+			return app('JsonOutput')->fail($e->getError());
+		}
 	}
 }

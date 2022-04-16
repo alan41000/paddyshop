@@ -53,5 +53,6 @@ class Coupon extends Validate
 		'add'   =>  ['name','desc','type','value','expire_type','expire_hour','start_time','end_time','min_order_price','apply_range','total_qty','sort','is_enable','is_user_receive','is_reg_send'],
 		'edit'  =>  ['id','name','desc','type','value','expire_type','expire_hour','start_time','end_time','min_order_price','apply_range','total_qty','sort','is_enable','is_user_receive','is_reg_send'],
 		'del'   =>  ['id'],
+		'fieldUpdate'   =>  ['id'],
 	];
 }
