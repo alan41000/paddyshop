@@ -47,13 +47,13 @@ class Wallet extends PaddyShop
      */    
     public static function payMoney($data)
     {
-        return self::transaction(function () use ($data) {
-            // 获取钱包信息
-            $walletInfo = Wallet::getOne(['where'=>['user_id'=>$data['user']['id']]]);
-            // 检查资金余额
-            if(!empty($walletInfo) && $walletInfo['normal_money'] < $data['total_price']){
-                throwException('余额不足');
-            }
+        // 获取钱包信息
+        $walletInfo = self::createWalletIfNotExist($data['user']['id']);
+        // 检查资金余额
+        if(!empty($walletInfo) && $walletInfo['normal_money'] < $data['total_price']){
+            throwException('余额不足');
+        }
+        return self::transaction(function () use ($data,$walletInfo) {            
             // 扣款
             Wallet::where('id', $walletInfo['id'])->dec('normal_money', $data['total_price'])->update();
             // 写用户钱包日志
@@ -84,7 +84,7 @@ class Wallet extends PaddyShop
     {
         return self::transaction(function () use ($data) {
             // 获取钱包信息
-            $walletInfo = Wallet::getOne(['where'=>['user_id'=>$data['user']['id']]]);
+            $walletInfo = self::createWalletIfNotExist($data['user']['id']);
             // 收款
             Wallet::where('id', $walletInfo['id'])->inc('normal_money', $data['total_price'])->update();
             // 写用户钱包日志

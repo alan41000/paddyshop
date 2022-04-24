@@ -182,11 +182,13 @@ class Order extends PaddyShop
             }
 
 			// 优惠券处理
-	        CouponUser::edit([
-				'id' => $data['coupon']['coupon_user_id'],
-				'use_time' => time(),
-				'order_id' => $order->id,
-	        ]);
+            if(!empty($data['coupon'])){
+                CouponUser::edit([
+                    'id' => $data['coupon']['coupon_user_id'],
+                    'use_time' => time(),
+                    'order_id' => $order->id,
+                ]);
+            }	        
 
             // 订单提交成功
             self::commit();

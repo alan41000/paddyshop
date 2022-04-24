@@ -331,6 +331,30 @@ class Goods extends PaddyshopAdmin
     }
     
     /**
+    * 首页推荐状态更新
+    * @Author: Alan Leung
+    */   
+	public function recommended()
+	{
+        $id         = getParams('id');
+        $params     = getParams('params');
+        $data       = ['id'=>$id, 'field'=>'is_home_recommended','params'=>$params];
+        try {
+            validate(GoodsValidate::class)->scene('fieldUpdate')->check($data);
+            if(GoodsModel::fieldUpdate($data))
+            {
+                return app('JsonOutput')->success();
+            }
+            else
+            {
+                return app('JsonOutput')->fail();
+            }
+        } catch (ValidateException $e) {
+            return app('JsonOutput')->fail($e->getError());
+        }
+    }
+
+    /**
      * 商品数据处理
      * @Author: Alan Leung
      * @param {array} $data
