@@ -143,8 +143,7 @@ class Auth extends PaddyshopApi
 		];
 
 		$app = EasyWechat::officialAccount($config);
-		$app->jssdk->buildConfig(['chooseWXPay'], $debug = true, $beta = true, $json = true);
-
-		dump($app);
+		$res = $app->jssdk->buildConfig(['chooseWXPay'], $debug = false, $beta = true, $json = false);
+        return app('JsonOutput')->success($res);
 	}
 }

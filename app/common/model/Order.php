@@ -457,13 +457,13 @@ class Order extends PaddyShop
                     // 'spbill_create_ip' => '123.12.12.123', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
                     'notify_url'    => config()['paddyshop']['website_url'].'api/order.order/wxPayNotify',
                     'trade_type'    => 'JSAPI',
-                    'openid'        => $params['user']['openid_weixin'],
+                    'openid'        => $isH5 == true ? $params['user']['openid_weixin_web'] : $params['user']['openid_weixin'],
                 ]);
 
 				if($result['return_code'] == 'SUCCESS'){
 					if($result['result_code'] == 'SUCCESS'){
 						if($isH5 == true){
-							$jssdk = $result->jssdk;
+							$jssdk = $app->jssdk;
 							$res = $jssdk->sdkconfig($result['prepay_id']);
 							return $res;
 						}else{
