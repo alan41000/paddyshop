@@ -195,10 +195,11 @@ class User extends PaddyShop
 		$unionid = $params['user_base_data']['unionid'] ?? '';
 		if(!empty($unionid)){
 			$userInfo = User::where(['unionid_weixin'=>$unionid])->find();
-			if(config()['paddyshop']['wallet_enable'] == '1'){
-				Wallet::createWalletIfNotExist($userInfo['id']);
+			if(empty($userInfo)){
+				return self::userAdd($params,'wechatMiniApp');
+			}else{
+				return self::userUpdate($params,$userInfo,'wechatMiniApp');
 			}
-			return self::userUpdate($params,$userInfo,'wechatMiniApp');
 		}else{
 			$userInfo = User::where(['openid_weixin'=>$params['user_base_data']['openid']])->find();
 			if(empty($userInfo)){
@@ -214,7 +215,11 @@ class User extends PaddyShop
 		$unionid = $params['raw']['unionid'] ?? '';
 		if(!empty($unionid)){
 			$userInfo = User::where(['unionid_weixin'=>$unionid])->find();
-			return self::userUpdate($params,$userInfo,'wechatH5');
+			if(empty($userInfo)){
+				return self::userAdd($params,'wechatH5');
+			}else{
+				return self::userUpdate($params,$userInfo,'wechatH5');
+			}
 		}else{
 			$userInfo = User::where(['openid_weixin_web'=>$params['raw']['openid']])->find();
 			if(empty($userInfo)){

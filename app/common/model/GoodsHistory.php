@@ -28,8 +28,8 @@ class GoodsHistory extends PaddyShop
 
 	public  static  function  add($data)
 	{
-		$user = Cache::remember('token:' . $data['token'], function () {
-			return Db::name('User')->withoutField('password,salt')->where(['token' => $this->token])->find();
+		$user = Cache::remember('token:' . $data['token'], function ($data) {
+			return Db::name('User')->withoutField('password,salt')->where(['token' => $data['token']])->find();
 		});
 		if(!empty($user) && !empty($user['token_expire']) && $user['token_expire'] > time()){
 			$goodsHistory = self::getOne(['where'=>[
