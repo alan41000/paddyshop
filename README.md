@@ -13,12 +13,18 @@
 ### 项目介绍
 #### PaddyShop全网多平台免费开源电商系统！
 * 一个基于thinkphp6+uniapp的轻量级、前后端分离的电商系统。
-* 我们致力于为中小企业打造一个完整、易于维护和二次开发的开源商城，源码100%开源，支持二次开发定制，没有过度的代码封装，小白新手程序员都能看得懂，让企业用更低的成本、更少的人力，更快的速度构建自己的商城，开启网上商城销售业务。
+* 我们致力于为中小企业打造一个完整、易于维护和易于二次开发的开源商城，源码100%开源，支持二次开发定制，没有过度的代码封装，小白新手程序员都能看得懂，让企业用更低的成本、更少的人力，更快的速度构建自己的商城，开启网上商城销售业务。
 
 ### 官网
 https://www.paddyshop.net
 
+### 关注PaddyShop公众号
+<img src='https://paddyshop.oss-cn-shanghai.aliyuncs.com/doc/ercode_offical_account.jpg' width='200' />
+
 ### 体验码
+<img src='https://paddyshop.oss-cn-shanghai.aliyuncs.com/doc/ercode_h5.png' width='200' />
+<img src='https://paddyshop.oss-cn-shanghai.aliyuncs.com/doc/ercode_miniapp_wechat.jpg' width='200' />
+
 
 ### 源代码地址
 * 服务器端php：
@@ -91,10 +97,15 @@ CentOS 8以上
 
 #### 安装教程
 1.将源码解压到服务器空间
+
 2.运行目录设在/public
+
 3.进行安装 http://域名/install
+
 4.后台地址：http://域名/admin
+
 5.h5地址：http://域名/h5
+
 安装完成后建议删除/app/install和/public/install目录。
 
 #### 页面展示
