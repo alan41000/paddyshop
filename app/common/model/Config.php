@@ -21,9 +21,12 @@ class Config extends PaddyShop
     public static function edit($data)
     {
         return self::transaction(function () use ($data) {
-            foreach($data as $k=>$v)
+            foreach($data as $k=>&$v)
             {
                 $configData = Config::getOne(['where'=>['name'=>$k]]);
+	            if($k == 'common_website_logo' || $k == 'common_website_icon'){
+					$v = str_replace(config('paddyshop.website_url'), '', $v);
+	            }
                 if(empty($configData)){
                     Config::create(['name' => $k,'value' => $v]);
                 }else{

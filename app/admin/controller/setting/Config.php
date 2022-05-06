@@ -39,10 +39,7 @@ class Config extends PaddyshopAdmin
         $data = ConfigModel::getAll();
 		if(!empty($data)){
 			foreach ($data as &$v){
-				if($v['name'] == 'common_website_logo'){
-					$v['value'] = config('paddyshop.website_url').$v['value'];
-				}
-				if($v['name'] == 'common_website_icon'){
+				if($v['name'] == 'common_website_logo' || $v['name'] == 'common_website_icon'){
 					$v['value'] = config('paddyshop.website_url').$v['value'];
 				}
 			}
