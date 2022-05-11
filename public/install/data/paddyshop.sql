@@ -670,7 +670,7 @@ INSERT INTO `permission_menu` VALUES (66, 0, '订单', '', '', 90, 'file-text-o'
 INSERT INTO `permission_menu` VALUES (67, 65, '商品管理', 'goods', 'goods.goods:list', 0, 'cubes', '/goods/goods', '/goods/views/goods', 1, NULL, 1, 1608738124, 1637826002);
 INSERT INTO `permission_menu` VALUES (68, 66, '订单管理', 'order', 'order.order:list', 0, 'reorder', '/order/order', '/order/views/order', 1, NULL, 1, 1608738142, 1637826090);
 INSERT INTO `permission_menu` VALUES (69, 0, '营销', '', '', 70, 'automobile', '/marketing', 'layoutHeaderAside', 1, NULL, 1, 1608738241, 1647937707);
-INSERT INTO `permission_menu` VALUES (70, 69, '优惠券', 'coupon', 'marketing:coupon:view', 0, 'cubes', '', '', 1, NULL, 1, 1608738262, 1648028804);
+INSERT INTO `permission_menu` VALUES (70, 69, '优惠券', 'coupon', 'marketing.coupon:list', 0, 'cubes', '', '', 1, NULL, 1, 1608738262, 1652255286);
 INSERT INTO `permission_menu` VALUES (71, 65, '商品分类', 'category', 'goods.category:list', 0, 'calendar', '/goods/category', '/goods/views/category', 1, NULL, 1, 1608824943, 1637826059);
 INSERT INTO `permission_menu` VALUES (72, 71, '添加', 'addCategory', 'goods.category:add', 0, '', '', '', 2, NULL, 1, 1608829070, 1637737894);
 INSERT INTO `permission_menu` VALUES (73, 71, '编辑', 'editCategory', 'goods.category:edit', 0, '', '', '', 2, NULL, 1, 1608829100, 1637737900);
@@ -690,7 +690,7 @@ INSERT INTO `permission_menu` VALUES (86, 65, '商品评价', 'comments', 'goods
 INSERT INTO `permission_menu` VALUES (87, 86, '编辑', 'editComments', 'goods.comments:edit', 0, '', '', '', 2, NULL, 1, 1634290309, 1637737919);
 INSERT INTO `permission_menu` VALUES (88, 86, '删除', 'delComments', 'goods.comments:del', 0, '', '', '', 2, NULL, 1, 1634290348, 1637737924);
 INSERT INTO `permission_menu` VALUES (89, 83, '编辑', 'editWallet', 'wallet.wallet:edit', 0, '', '', '', 2, NULL, 1, 1635064647, 1637740624);
-INSERT INTO `permission_menu` VALUES (90, 1, '系统设置', 'setting', 'setting.config:getall', 0, 'database', '/setting/system', '/setting/views/system', 1, NULL, 1, 1636420815, 1637826248);
+INSERT INTO `permission_menu` VALUES (90, 1, '系统设置', 'setting', '', 0, 'database', '/setting/system', '/setting/views/system', 1, NULL, 1, 1636420815, 1652257957);
 INSERT INTO `permission_menu` VALUES (91, 5, '菜单权限校验', 'getpermissionMenu', '', 0, '', '', '', 2, NULL, 1, 1637726183, 1637726207);
 INSERT INTO `permission_menu` VALUES (92, 71, '分类树', 'categoryTree', 'goods.category:tree', NULL, '', NULL, NULL, 2, NULL, 1, 1637737711, 1637737711);
 INSERT INTO `permission_menu` VALUES (93, 67, '上下架', 'goodsShelves', 'goods.goods:shelves', NULL, '', NULL, NULL, 2, NULL, 1, 1637738112, 1637738112);
@@ -699,12 +699,13 @@ INSERT INTO `permission_menu` VALUES (95, 86, '显示隐藏', NULL, 'goods.comme
 INSERT INTO `permission_menu` VALUES (96, 28, '所有数据', 'getAllDelivery', 'setting.delivery:getall', 0, '', '', '', 2, NULL, 1, 1637739430, 1637739471);
 INSERT INTO `permission_menu` VALUES (97, 90, '保存', NULL, 'setting.config:save', NULL, '', NULL, NULL, 2, NULL, 1, 1637743179, 1637743179);
 INSERT INTO `permission_menu` VALUES (98, 19, '获取权限', NULL, 'auth.role:getpermission', NULL, '', NULL, NULL, 2, NULL, 1, 1637743449, 1637743449);
-INSERT INTO `permission_menu` VALUES (99, 104, '添加', NULL, 'marketing:coupon:add', NULL, '', NULL, NULL, 2, NULL, 1, 1647509796, 1648028614);
-INSERT INTO `permission_menu` VALUES (100, 104, '编辑', NULL, 'marketing:coupon:edit', NULL, '', NULL, NULL, 2, NULL, 1, 1647509817, 1648028625);
+INSERT INTO `permission_menu` VALUES (99, 104, '添加', NULL, 'marketing.coupon:add', NULL, '', NULL, NULL, 2, NULL, 1, 1647509796, 1652255309);
+INSERT INTO `permission_menu` VALUES (100, 104, '编辑', NULL, 'marketing.coupon:edit', NULL, '', NULL, NULL, 2, NULL, 1, 1647509817, 1652255316);
 INSERT INTO `permission_menu` VALUES (101, 104, '删除', NULL, 'marketing:coupon:del', NULL, '', NULL, NULL, 2, NULL, 1, 1647509840, 1648028634);
-INSERT INTO `permission_menu` VALUES (102, 104, '查看', NULL, 'marketing:coupon:view', NULL, '', NULL, NULL, 2, NULL, 1, 1647509877, 1648028647);
-INSERT INTO `permission_menu` VALUES (103, 70, '领券记录', 'couponUser', 'marketing:couponuser:view', NULL, 'bar-chart-o', '/marketing/couponuser', '/marketing/views/couponuser', 1, NULL, 1, 1647937687, 1648028706);
-INSERT INTO `permission_menu` VALUES (104, 70, '优惠券管理', 'couponList', 'marketing:coupon:view', NULL, 'thumbs-up', '/marketing/coupon', '/marketing/views/coupon', 1, NULL, 1, 1648028575, 1648028857);
+INSERT INTO `permission_menu` VALUES (102, 104, '查看', NULL, 'marketing.coupon:view', NULL, '', NULL, NULL, 2, NULL, 1, 1647509877, 1652255323);
+INSERT INTO `permission_menu` VALUES (103, 70, '领券记录', 'couponUser', 'marketing.couponuser:list', NULL, 'bar-chart-o', '/marketing/couponuser', '/marketing/views/couponuser', 1, NULL, 1, 1647937687, 1652255599);
+INSERT INTO `permission_menu` VALUES (104, 70, '优惠券管理', 'couponList', 'marketing.coupon:list', NULL, 'thumbs-up', '/marketing/coupon', '/marketing/views/coupon', 1, NULL, 1, 1648028575, 1652255300);
+INSERT INTO `permission_menu` VALUES (105, 90, '数据', '', 'setting.config:getall', NULL, '', NULL, NULL, 2, NULL, 1, 1652257942, 1652257952);
 
 -- ----------------------------
 -- Table structure for permission_role

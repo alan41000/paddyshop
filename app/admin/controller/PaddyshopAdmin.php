@@ -203,7 +203,7 @@ class PaddyshopAdmin extends BaseController
             // 是否有权限
             if(!$this->checkPermission())
             {
-                die(json_encode(['msg'=>'权限不足！','code'=>401]));
+                die(json_encode(['msg'=>'权限不足！','code'=>403]));
             }
         }
     }

@@ -57,19 +57,17 @@ class Role extends PaddyshopAdmin
         $name           = getParams('name');
         $is_enable      = getParams('is_enable');
         $code           = getParams('code');
-        $platform_id    = getParams('platform_id');
         $menu_ids       = json_encode(getParams('menu_ids'));
 
         $data = [
             'name'          =>  $name,
             'is_enable'     =>  $is_enable,
             'code'          =>  $code,
-            'platform_id'   =>  $platform_id,
             'menu_ids'      =>  $menu_ids,
         ];
         try {            
             validate(RoleValidate::class)->scene('add')->check($data);
-            if(RoleModel::add($data) > 0)
+            if(RoleModel::add($data))
             {
                 return app('JsonOutput')->success();
             }
@@ -92,7 +90,6 @@ class Role extends PaddyshopAdmin
         $name           = getParams('name');
         $is_enable      = getParams('is_enable');
         $code           = getParams('code');
-        $platform_id    = getParams('platform_id');
         $menu_ids       = json_encode(getParams('menu_ids'));
 
         $data = [
@@ -100,7 +97,6 @@ class Role extends PaddyshopAdmin
             'name'          =>  $name,
             'is_enable'     =>  $is_enable,
             'code'          =>  $code,
-            'platform_id'   =>  $platform_id,
             'menu_ids'      =>  $menu_ids,
         ];
 

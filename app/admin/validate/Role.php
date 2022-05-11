@@ -29,7 +29,6 @@ class Role extends Validate
         'id'            => 'require|integer',    
         'name'          => 'require|length:2,150',
         'is_enable'     => 'integer',
-        'platform_id'   => 'require',
         // 'code'         => 'string',        
         // 'menu_ids'     => 'string',        
     ];
@@ -39,8 +38,8 @@ class Role extends Validate
     ];
 
     protected $scene = [
-        'add'   =>  ['name','is_enable','platform_id'],
-        'edit'  =>  ['id','name','is_enable','platform_id'],
+        'add'   =>  ['name','is_enable'],
+        'edit'  =>  ['id','name','is_enable'],
         'del'   =>  ['id'],
     ];    
 }

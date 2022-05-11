@@ -34,13 +34,16 @@ class Config extends PaddyshopAdmin
      * 获取设置列表
      * @Author: Alan Leung
      */
-    public static function getAll()
+    public function getAll()
     {
         $data = ConfigModel::getAll();
 		if(!empty($data)){
 			foreach ($data as &$v){
 				if($v['name'] == 'common_website_logo' || $v['name'] == 'common_website_icon'){
 					$v['value'] = config('paddyshop.website_url').$v['value'];
+				}
+				if(($v['name'] == 'app_weixinminiapp_appsecret' || $v['name'] == 'app_weixinh5_appsecret' || $v['name'] == 'payment_weixin_key') && $this->admin['role_id'] !== 1){
+					$v['value'] = '非超级管理员不显示';
 				}
 			}
 		}
@@ -51,7 +54,7 @@ class Config extends PaddyshopAdmin
      * 设置保存
      * @Author: Alan Leung
      */
-    public static function save()
+    public function save()
     {       
         try {
             $data = request()->param();

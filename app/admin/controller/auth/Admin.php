@@ -77,7 +77,7 @@ class Admin extends PaddyshopAdmin
             'email'         =>  $email,
         ];
         try {            
-            validate(AdminValidate::class)->check($data);
+            validate(AdminValidate::class)->scene('add')->check($data);
             if(AdminModel::add($data))
             {
                 return app('JsonOutput')->success();
