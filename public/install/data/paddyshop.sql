@@ -603,7 +603,7 @@ CREATE TABLE `permission_menu`  (
   `create_time` int(11) UNSIGNED NULL DEFAULT 0 COMMENT '添加时间',
   `update_time` int(11) UNSIGNED NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 99 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '权限：菜单' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 106 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '权限：菜单' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of permission_menu
