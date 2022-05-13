@@ -21,7 +21,7 @@ class WalletRecharge extends PaddyShop
      * @Author: Alan Leung
      * @param {*} $params
      */    
-    public static function pay($params = [])
+    public static function pay($params = [],$isH5 = false)
     {       
         // 获取订单信息
         $where = ['id'=>intval($params['id']), 'user_id' => $params['user']['id']];
@@ -47,7 +47,7 @@ class WalletRecharge extends PaddyShop
         {
             // 微信支付
             case 1:
-                $app = self::wxPayConfig();
+                $app = self::wxPayConfig($isH5);
                 $result = $app->order->unify([
                     'body'          => '钱包充值支付-'.$rechargeOrder['recharge_no'],
                     'out_trade_no'  => $rechargeOrder['recharge_no'],
@@ -55,24 +55,38 @@ class WalletRecharge extends PaddyShop
                     // 'spbill_create_ip' => '123.12.12.123', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
                     'notify_url'    => config()['paddyshop']['website_url'].'api/wallet.Recharge/wxPayNotify',
                     'trade_type'    => 'JSAPI',
-                    'openid'        => $params['user']['openid_weixin'],
+                    'openid'        => $isH5 == true ? $params['user']['openid_weixin_web'] : $params['user']['openid_weixin'],
                 ]);
 
-                $appId = config()['paddyshop']['weixinminiapp_appid'];
-                $nonceStr = $result['nonce_str'];
-                $prepay_id = $result['prepay_id'];
-                $timeStamp = time();
-                $key = config()['paddyshop']['weixinpay_key'];
-                $paySign = md5("appId=$appId&nonceStr=$nonceStr&package=prepay_id=$prepay_id&signType=MD5&timeStamp=$timeStamp&key=$key");
-                $res = [
-                    'nonceStr'  =>  $nonceStr,
-                    'prepay_id' =>  $prepay_id,
-                    'timeStamp' =>  strval($timeStamp),
-                    'paySign'   =>  $paySign,
-                    'signType'  =>  'MD5',
-                ];
-                
-                return $res;
+	            if($result['return_code'] == 'SUCCESS'){
+		            if($result['result_code'] == 'SUCCESS'){
+			            if($isH5 == true){
+				            $jssdk = $app->jssdk;
+				            $res = $jssdk->sdkconfig($result['prepay_id']);
+				            return $res;
+			            }else{
+				            $appId = config()['paddyshop']['weixinminiapp_appid'];
+				            $nonceStr = $result['nonce_str'];
+				            $prepay_id = $result['prepay_id'];
+				            $timeStamp = time();
+				            $key = config()['paddyshop']['weixinpay_key'];
+				            $paySign = md5("appId=$appId&nonceStr=$nonceStr&package=prepay_id=$prepay_id&signType=MD5&timeStamp=$timeStamp&key=$key");
+				            $res = [
+					            'nonceStr'  =>  $nonceStr,
+					            'prepay_id' =>  $prepay_id,
+					            'timeStamp' =>  strval($timeStamp),
+					            'paySign'   =>  $paySign,
+					            'signType'  =>  'MD5',
+				            ];
+
+				            return $res;
+			            }
+		            } else {
+			            throwException($result['err_code_des'].'，'.$result['err_code']);
+		            }
+	            } else {
+		            throwException($result['return_msg'] ?? '支付配置有误');
+	            }
                 break;
 
             default:
@@ -81,15 +95,15 @@ class WalletRecharge extends PaddyShop
         }    
     }
 
-    public static function notify($type)
+    public static function notify($type, $isH5 = false)
     {
         switch($type)
         {
             case 'Weixin':
-                $app = self::wxPayConfig();
-                $response = $app->handlePaidNotify(function($message, $fail){  
-                    $rechargeOrder = self::getOne(['where'=>['recharge_no'=>$message['out_trade_no']]]);
-                    // 订单信息
+                $app = self::wxPayConfig($isH5);
+                $response = $app->handlePaidNotify(function($message, $fail){
+	                // 订单信息
+					$rechargeOrder = self::getOne(['where'=>['recharge_no'=>$message['out_trade_no']]]);
                     if(empty($rechargeOrder) || $rechargeOrder['status'] == 1){
                         return true;
                     }       
@@ -189,20 +203,39 @@ class WalletRecharge extends PaddyShop
      * 微信支付配置
      * @Author: Alan Leung
      */    
-    private static function wxPayConfig()
-    {
-        $config = [
-            // 必要配置
-            'app_id'             => config()['paddyshop']['weixinminiapp_appid'],
-            'mch_id'             => config()['paddyshop']['weixinpay_mch_id'],
-            'key'                => config()['paddyshop']['weixinpay_key'],
+	private static function wxPayConfig($isH5 = false)
+	{
+		if($isH5 == true){
+			$config = [
+				// 必要配置
+				'app_id'             => config()['paddyshop']['weixinh5_appid'],
+				'mch_id'             => config()['paddyshop']['weixinpay_mch_id'],
+				'key'                => config()['paddyshop']['weixinpay_key'],
 
-            // 如需使用敏感接口（如退款、发送红包等）需要配置 API 证书路径(登录商户平台下载 API 证书)
-            'cert_path'          => '', // XXX: 绝对路径！！！！
-            'key_path'           => '',      // XXX: 绝对路径！！！！
+				// 如需使用敏感接口（如退款、发送红包等）需要配置 API 证书路径(登录商户平台下载 API 证书)
+				'cert_path'          => '', // XXX: 绝对路径！！！！
+				'key_path'           => '',      // XXX: 绝对路径！！！！
 
-            'notify_url'         => config()['paddyshop']['website_url'].'api/wallet.Recharge/wxPayNotify',
-        ];
-        return EasyWeChat::payment($config);
-    }
+				'notify_url'         => config()['paddyshop']['website_url'].'api/order.order/wxPayNotify/ish5/1',
+
+				'sandbox'       => false, // 设置为 false 或注释则关闭沙箱模式
+			];
+		}else{
+			$config = [
+				// 必要配置
+				'app_id'             => config()['paddyshop']['weixinminiapp_appid'],
+				'mch_id'             => config()['paddyshop']['weixinpay_mch_id'],
+				'key'                => config()['paddyshop']['weixinpay_key'],
+
+				// 如需使用敏感接口（如退款、发送红包等）需要配置 API 证书路径(登录商户平台下载 API 证书)
+				'cert_path'          => '', // XXX: 绝对路径！！！！
+				'key_path'           => '',      // XXX: 绝对路径！！！！
+
+				'notify_url'         => config()['paddyshop']['website_url'].'api/order.order/wxPayNotify',
+				'sandbox'       => false, // 设置为 false 或注释则关闭沙箱模式
+			];
+		}
+
+		return EasyWeChat::payment($config);
+	}
 }

@@ -75,12 +75,13 @@ class Recharge extends PaddyshopApi
         try{
             $rechargeId     = getParams('rechargeId');
             $payment        = getParams('payment');
+	        $isH5                = !empty(getParams('isH5'));
             $data = [
                 'id'                =>  $rechargeId,
                 'user'              =>  $this->user,
                 'payment'           =>  $payment,
             ];
-            $res = WalletRechargeModel::pay($data);
+            $res = WalletRechargeModel::pay($data,$isH5);
             if($res)
             {
                 return app('JsonOutput')->success($res);
@@ -100,7 +101,14 @@ class Recharge extends PaddyshopApi
         try{
             // $result = empty($GLOBALS['HTTP_RAW_POST_DATA']) ? $this->xmlToArray(file_get_contents('php://input')) : $this->xmlToArray($GLOBALS['HTTP_RAW_POST_DATA']);
             // file_put_contents('test.txt', json_encode($result));
-            if(WalletRechargeModel::notify('Weixin') === true)
+	        $isH5 = getParams('ish5');
+	        if(!empty($isH5) && $isH5 == 1){
+		        $isH5 = true;
+	        }else{
+		        $isH5 = false;
+	        }
+
+            if(WalletRechargeModel::notify('Weixin',$isH5) === true)
             {
                 return xml(['return_code' => 'SUCCESS', 'return_msg' => 'OK']);
             }
