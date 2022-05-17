@@ -11,7 +11,7 @@
 
 return [
     // 系统版本
-    'APPLICATION_VERSION'       => 'v1.0.0',
+    'APPLICATION_VERSION'       => 'v1.0.1',
 
     // 网站名称
     'website_name'              => cache('common_website_name'),
