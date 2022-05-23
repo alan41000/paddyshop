@@ -103,6 +103,23 @@ CREATE TABLE `config` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='系统配置';
 
+INSERT INTO `config` VALUES (16,'common_website_hotsearch','','',1651821882,1651821882);
+INSERT INTO `config` VALUES (15,'upload_type','local','',1651737598,1651820081);
+INSERT INTO `config` VALUES (14,'payment_weixin_key','','',1651737596,1652289347);
+INSERT INTO `config` VALUES (13,'payment_weixin_mchid','','',1651737596,1652289347);
+INSERT INTO `config` VALUES (12,'payment_weixin_enable','1','',1651737596,1652289347);
+INSERT INTO `config` VALUES (11,'payment_wallet_enable','1','',1651737584,1651737584);
+INSERT INTO `config` VALUES (10,'app_weixinh5_appsecret','','',1651737582,1652637611);
+INSERT INTO `config` VALUES (9,'app_weixinh5_appid','','',1651737582,1652637611);
+INSERT INTO `config` VALUES (8,'app_weixinminiapp_appsecret','','',1651737559,1652289321);
+INSERT INTO `config` VALUES (7,'app_weixinminiapp_appid','','',1651737559,1652289321);
+INSERT INTO `config` VALUES (6,'common_goods_inventory_rules','1','',1651737530,1651821882);
+INSERT INTO `config` VALUES (5,'common_website_icon','','',1651737530,1651821882);
+INSERT INTO `config` VALUES (4,'common_website_logo','','',1651737530,1651821882);
+INSERT INTO `config` VALUES (3,'common_website_url','/','',1651737530,1651821882);
+INSERT INTO `config` VALUES (2,'common_website_enable','1','',1651737530,1651821882);
+INSERT INTO `config` VALUES (1,'common_website_name','PaddyShop','',1651737530,1651821882);
+
 -- ----------------------------
 -- Table structure for delivery
 -- ----------------------------
