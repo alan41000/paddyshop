@@ -42,7 +42,9 @@ class PaddyshopApi extends BaseController
 	    'orderrecordbarrage',
 	    'getgoodsrecommend',
 	    'couponlist',
-	    'goodscouponlist'
+	    'goodscouponlist',
+        'articlelist',
+        'articledetail',
     ];
 
     /**
