@@ -3,10 +3,10 @@
 <head>
 	<meta charset="utf-8" />
 	<title>PaddyShop安装程序</title>
-    <script src="/static/vue@2.6.14.js"></script>
-    <script src="/static/axios.min.js"></script>
-    <script src="/static/element-ui@2.15.8.js"></script>
-    <link rel="stylesheet" href="/static/element-ui.css">
+    <script src="static/vue@2.6.14.js"></script>
+    <script src="static/axios.min.js"></script>
+    <script src="static/element-ui@2.15.8.js"></script>
+    <link rel="stylesheet" href="static/element-ui.css">
     
 	<style>
 		.ct{
@@ -84,8 +84,8 @@
         prop="check"
         label="是否符合">
             <template slot-scope="scope">
-                <i class="el-icon-success" style="font-size: 20px; color:#18d56b;" v-if="scope.row.check"></i>
-                <i class="el-icon-error"  style="font-size: 20px; color:crimson;"  v-else></i>
+                <span style="font-size: 20px; color:#18d56b;" v-if="scope.row.check">√</span>
+                <span style="font-size: 20px; color:crimson;" v-else>×</span>
             </template>
         </el-table-column>
     </el-table>
@@ -117,8 +117,8 @@
         prop="check"
         label="是否符合">
         <template slot-scope="scope">
-            <i class="el-icon-success" style="font-size: 20px; color:#18d56b;" v-if="scope.row.check"></i>
-            <i class="el-icon-error"  style="font-size: 20px; color:crimson;"  v-else></i>
+            <span style="font-size: 20px; color:#18d56b;" v-if="scope.row.check">√</span>
+            <span style="font-size: 20px; color:crimson;" v-else>×</span>
         </template>
         </el-table-column>
     </el-table>
@@ -150,8 +150,8 @@
         prop="check"
         label="是否符合">
         <template slot-scope="scope">
-            <i class="el-icon-success" style="font-size: 20px; color:#18d56b;" v-if="scope.row.check"></i>
-            <i class="el-icon-error"  style="font-size: 20px; color:crimson;"  v-else></i>
+            <span style="font-size: 20px; color:#18d56b;" v-if="scope.row.check">√</span>
+            <span style="font-size: 20px; color:crimson;" v-else>×</span>
         </template>
         </el-table-column>
     </el-table>
