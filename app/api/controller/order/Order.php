@@ -52,12 +52,14 @@ class Order extends PaddyshopApi
 	        $goods    = json_decode(getParams('goods'),true);
 	        $buy_type = getParams('buy_type');
 	        $coupon   = getParams('coupon');
+            $integral_deduction   = getParams('integral_deduction');
 
 	        $data     = [
 	            'goods'     => $goods,
 	            'buy_type'  => $buy_type,
 	            'user'      => $this->user,
 	            'coupon'    => $coupon,
+                'integral_deduction' => $integral_deduction,
 	        ];
 			$res =  OrderModel::confirm($data);
 			return app('JsonOutput')->success($res);
@@ -80,6 +82,7 @@ class Order extends PaddyshopApi
             $payment_id     = getParams('payment_id');
             $address        = json_decode(getParams('address'),true);
             $user_note      = getParams('user_note');
+            $integral_deduction   = getParams('integral_deduction');
 
             $data     = [
                 'goods'         => $goods,
@@ -89,6 +92,7 @@ class Order extends PaddyshopApi
                 'payment_id'    => $payment_id,
                 'user_note'     => $user_note,
                 'address'       => $address,
+                'integral_deduction'    =>  $integral_deduction,
             ];
             validate(OrderValidate::class)->scene('add')->check($data);
             $res = OrderModel::add($data);
@@ -140,31 +144,15 @@ class Order extends PaddyshopApi
     {
         try
         {
-            $id = getParams('order_id');
-            if(empty($id) || !is_numeric($id)) throwException('参数有误');
-            
+            $orderId = getParams('order_id');
+            if(empty($orderId) || !is_numeric($orderId)) throwException('参数有误');
+
             $cancel_data = [
-                'id'            =>  $id,
-                'cancel_time'   =>  time(),
-                'status'        =>  5
+                'order_id'  =>  $orderId,
+                'user'  => $this->user,
             ];
-            $res = OrderModel::edit($cancel_data);
-            if($res)
-            {
-                // 用户消息
-                $msg_data = [
-                    'user_id'       =>  $this->user['id'],
-                    'title'         =>  '订单取消',
-                    'detail'        =>  '订单取消成功',
-                    'business_id'   =>  $id,
-                    'business_type' =>  1,
-                ];
-                UserMessageModel::add($msg_data);
+            if( OrderModel::cancel($cancel_data)){
                 return app('JsonOutput')->success();
-            }
-            else
-            {
-                return app('JsonOutput')->fail();
             }
         }
         catch(\Exception $e)
@@ -271,24 +259,9 @@ class Order extends PaddyshopApi
         {
             $id = getParams('order_id');
             if(empty($id) || !is_numeric($id)) throwException('参数有误');
-            
-            $cancel_data = [
-                'id'            =>  $id,
-                'collect_time'  =>  time(),
-                'status'        =>  4
-            ];
-            $res = OrderModel::edit($cancel_data);
-            if($res)
-            {
-                // 库存扣除：确认收货减库存
-                if(config()['paddyshop']['goods_inventory_rules'] == '3'){
-                    GoodsModel::inventoryDeduct($id);
-                }
+
+            if(OrderModel::receipt(['id' => $id,'user'=>$this->user])){
                 return app('JsonOutput')->success();
-            }
-            else
-            {
-                return app('JsonOutput')->fail();
             }
         }
         catch(\Exception $e)

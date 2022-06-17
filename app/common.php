@@ -278,3 +278,14 @@ if (!function_exists('crosHeader')) {
 		header("Access-Control-Allow-Headers:Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-CSRF-TOKEN, X-Requested-With,PaddyShopToken,PaddyShopUserClient");
 	}
 }
+
+if (!function_exists('priceNumberFormat')) {
+    /**
+     * 金额格式化
+     * @Author: Alan Leung
+     */
+    function priceNumberFormat($value, $decimals = 2, $dec_point = '.')
+    {
+        return number_format((float) $value, $decimals, $dec_point, '');
+    }
+}

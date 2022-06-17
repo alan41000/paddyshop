@@ -84,4 +84,7 @@ return [
 
     // 钱包支付启用
     'wallet_enable'             => cache('payment_wallet_enable'),
+
+    // 积分抵现比例
+    'integral_deduction_scale'             => (float)cache('common_website_integral_deduction'),
 ];

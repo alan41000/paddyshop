@@ -6078,4 +6078,20 @@ CREATE TABLE `coupon_user` (
                                KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='用户优惠券';
 
+-- ----------------------------
+-- Table structure for user_integral_log
+-- ----------------------------
+CREATE TABLE `user_integral_log` (
+                                     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+                                     `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
+                                     `type` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '操作类型（0减少, 1增加）',
+                                     `original_integral` int(11) NOT NULL DEFAULT '0' COMMENT '原始积分',
+                                     `new_integral` int(11) NOT NULL DEFAULT '0' COMMENT '最新积分',
+                                     `operation_integral` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '操作积分',
+                                     `msg` text COMMENT '操作原因',
+                                     `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '添加时间',
+                                     PRIMARY KEY (`id`) USING BTREE,
+                                     KEY `user_id` (`user_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户积分日志';
+
 SET FOREIGN_KEY_CHECKS = 1;

@@ -86,6 +86,24 @@ class Order extends PaddyShop
             throwException('参数有误！');
         }
 
+        // 扩展展示数据
+        // name 名称
+        // price 金额
+        // type 类型（0减少, 1增加）
+        // tips 提示信息
+        // business 业务类型（内容格式不限）
+        // ext 扩展数据（内容格式不限）
+//        $extension_data = [
+            // [
+            //     'name'       => '感恩节9折',
+            //     'price'      => 23,
+            //     'type'       => 0,
+            //     'tips'       => '-￥23元',
+            //     'business'   => null,
+            //     'ext'        => null,
+            // ],
+//        ];
+
         $total_price = self::calculatePrice($goods);
 
 	    // 优惠券校验
@@ -93,9 +111,9 @@ class Order extends PaddyShop
 		    CouponUser::checkUse($data,$total_price);
 	    }
 
-		$preferential_price = self::calculatePreferentialPrice($data,$total_price);
+		[$preferential_price,$extension_data] = self::calculatePreferentialPrice($data,$total_price);
 	    $increase_price = 0;
-        
+
         // 订单主信息
         $order_data = [
             'order_no'              => date('YmdHis').getNumberCode(6),
@@ -105,8 +123,8 @@ class Order extends PaddyShop
             'preferential_price'    => $preferential_price,
             'increase_price'        => $increase_price,
             'price'                 => $total_price,
-            'total_price'           => ($total_price - $preferential_price) <= 0 ? 0 : $total_price - $preferential_price,
-            'extension_data'        => '',
+            'total_price'           => ($total_price - $preferential_price) <= 0 ? 0 : priceNumberFormat($total_price - $preferential_price),
+            'extension_data'        => empty($extension_data) ? '' : json_encode($extension_data),
             'payment_id'            => $data['payment_id'],
             'qty_total'             => array_sum(array_column(array_column($goods, 'skuValue_selected'),'qty')),
             'client_type'           => '',
@@ -188,7 +206,42 @@ class Order extends PaddyShop
                     'use_time' => time(),
                     'order_id' => $order->id,
                 ]);
-            }	        
+            }
+
+            // 积分抵现处理
+            if($data['integral_deduction'] && config()['paddyshop']['integral_deduction_scale'] > 0){
+                $user_integral = User::getOne(['field'=>'integral','where'=>['id'=>$data['user']['id']]])['integral'];
+                $max_deduction_integral = 0;
+                foreach($data['goods'] as $vd)
+                {
+                    $goodsInfo = Goods::getOne(['field'=>'max_buy_integral','where'=>['id'=>$vd['goods_id']]]);
+                    $max_deduction_integral += $goodsInfo['max_buy_integral'] * $vd['qty'];
+                }
+                // 如果用户积分小于最大可用积分，则用用户积分计算
+                if($user_integral < $max_deduction_integral){
+                    $deduction_integral = $user_integral;
+                }else{
+                    $deduction_integral = $max_deduction_integral;
+                }
+
+                // 扣减用户积分
+                User::edit([
+                    'id' => $data['user']['id'],
+                    'integral' => $user_integral - $deduction_integral,
+                ]);
+
+                // 写入积分日志
+                UserIntegralLog::add(
+                    [
+                        'user_id' => $data['user']['id'],
+                        'type'  => 0,
+                        'original_integral' => $user_integral,
+                        'new_integral' => $user_integral - $deduction_integral,
+                        'operation_integral' => $deduction_integral,
+                        'msg' => '积分抵现使用'
+                    ]
+                );
+            }
 
             // 订单提交成功
             self::commit();
@@ -246,8 +299,14 @@ class Order extends PaddyShop
 	        $total_price = self::calculatePrice($goods);
 	        // 满足订单使用条件的优惠券
 	        $coupon_list = CouponUser::isInApplyRange($coupon_list, array_column($goods,'goods_id'),$total_price);
+            // 积分抵现计算
+            $user_integral = User::getOne(['field'=>'integral','where'=>['id'=>$data['user']['id']]])['integral'];
+            $integral_deduction = [
+                    'user_integral' => $user_integral,
+                    'max_can_use_integral' => config('paddyshop.integral_deduction_scale') > 0 ? self::calculateMaxCanUseIntegral($data['goods']) : 0,
+            ];
 			// 计算优惠价
-	        $preferential_price = self::calculatePreferentialPrice($data,$total_price);
+            [$preferential_price,$extension_data] = self::calculatePreferentialPrice($data,$total_price);
 			// 增加的价格
 			$increase_price = 0;
 			// 价格打包数据
@@ -270,6 +329,8 @@ class Order extends PaddyShop
                 'goods_list'                => $goods,      // 商品清单
                 'price_data'                => $price_data, // 优惠金额，总金额，增加金额，订单实际支付金额
 	            'coupon_list'               => $coupon_list,
+                'integral_deduction'  => $integral_deduction,
+                'extension_data'        =>  $extension_data,
             ];
 			return  $result;
         }
@@ -360,6 +421,23 @@ class Order extends PaddyShop
         return $total_price;
     }
 
+    /**
+     * 计算订单最大可用积分
+     * @Author: Alan Leung
+     * @param {*} $goods
+     */
+    public static  function  calculateMaxCanUseIntegral($goods)
+    {
+        $order_max_can_use_integral = 0;
+        foreach($goods as $v)
+        {
+            $goodsInfo = Goods::getOne(['field'=>'max_buy_integral','where'=>['id'=>$v['goods_id']]]);
+            $goods_max_buy_integral = $goodsInfo['max_buy_integral'] * $v['qty'];
+            $order_max_can_use_integral += $goods_max_buy_integral;
+        }
+        return (int)$order_max_can_use_integral;
+    }
+
 	/**
 	 * 计算优惠价格
 	 * @Author: Alan Leung
@@ -368,6 +446,7 @@ class Order extends PaddyShop
 	public  static  function  calculatePreferentialPrice($params,$total_price)
 	{
 		$preferentialPrice = 0;
+        $extension_data = [];
 
 		// 优惠券
 		if(!empty($params['coupon']['coupon_id'])){
@@ -387,8 +466,50 @@ class Order extends PaddyShop
 			if($coupon['type'] == 1){
 				$preferentialPrice = $total_price * ((10 - $coupon['value']) / 10);
 			}
+            // 扩展数据
+            $extension_data[] = [
+                'name'       => '优惠券',
+                'price'      => $preferentialPrice,
+                'type'       => 0,
+                'tips'       => '-￥'.$preferentialPrice.'元',
+                'business'   => null,
+                'ext'        => null,
+            ];
 		}
-		return $preferentialPrice;
+
+        // 积分抵现
+        if($params['integral_deduction'] && (float)config('paddyshop.integral_deduction_scale') > 0){
+            // 用户积分
+            $user_integral = User::getOne(['field'=>'integral','where'=>['id'=>$params['user']['id']]])['integral'];
+            // 最大可抵扣积分
+            $max_deduction_integral = 0;
+            // 使用积分
+            $deduction_integral = 0;
+            foreach($params['goods'] as $vd)
+            {
+                $goodsInfo = Goods::getOne(['field'=>'max_buy_integral','where'=>['id'=>$vd['goods_id']]]);
+                $max_deduction_integral += $goodsInfo['max_buy_integral'] * $vd['qty'];
+            }
+            // 如果用户积分小于最大可用积分，则用用户积分计算
+            if($user_integral < $max_deduction_integral){
+                $deduction_integral = $user_integral;
+                $preferentialPrice += $deduction_integral * (float)config('paddyshop.integral_deduction_scale') / 100;
+            }else{
+                $deduction_integral = $max_deduction_integral;
+                $preferentialPrice += $deduction_integral * (float)config('paddyshop.integral_deduction_scale') / 100;
+            }
+            // 扩展数据
+            $extension_data[] = [
+                'name'       => '积分抵现',
+                'price'      => $preferentialPrice,
+                'type'       => 0,
+                'tips'       => '-￥'.$preferentialPrice.'元',
+                'business'   => $deduction_integral,
+                'ext'        => null,
+            ];
+        }
+
+		return [$preferentialPrice,$extension_data];
 	}
 
     /**
@@ -405,6 +526,106 @@ class Order extends PaddyShop
         }
 
         return false;
+    }
+
+    /**
+     * 取消订单
+     * @Author: Alan Leung
+     * @param {*} $data
+     */
+    public  static  function  cancel($data)
+    {
+        return self::transaction(function () use ($data) {
+            // 修改订单
+            self::edit([
+                'id'    => $data['order_id'],
+                'status'    => 5,
+                'cancel_time'   => time(),
+            ]);
+            // 用户消息
+            UserMessage::add([
+                'user_id'       => $data['user']['id'],
+                'title'         =>  '订单取消',
+                'detail'        =>  '订单取消成功',
+                'business_id'   =>  $data['order_id'],
+                'business_type' =>  1,
+            ]);
+            // 返还积分
+            $orderInfo = self::getOne(['where'=>['id'=>$data['order_id']]]);
+            if(!empty($orderInfo['extension_data'])){
+                foreach(json_decode($orderInfo['extension_data'],true) as $v){
+                    if($v['name'] == '积分抵现'){
+                        // 加积分
+                        User::where('id', $data['user']['id'])->inc('integral', $v['business'])->update();
+                        // 写入积分日志
+                        UserIntegralLog::add(
+                            [
+                                'user_id' => $data['user']['id'],
+                                'type'  => 1,
+                                'original_integral' => $data['user']['integral'],
+                                'new_integral' => $data['user']['integral'] + $v['business'],
+                                'operation_integral' => $v['business'],
+                                'msg' => '取消订单返还积分'
+                            ]
+                        );
+                    }
+                }
+            }
+            return true;
+        });
+    }
+
+    /**
+     * 订单确认收货
+     * @Author: Alan Leung
+     * @param {*} $data
+     */
+    public  static  function  receipt($data)
+    {
+        return self::transaction(function () use ($data) {
+            $orderInfo = self::getOne(['where'=>['id'=>$data['id']]]);
+            $userInfo = User::getOne(['field'=>'integral','where'=>['id'=>$data['user']['id']]]);
+            if(empty($orderInfo) || $orderInfo['status'] != 3) throwException('订单数据有误');
+             $cancel_data = [
+                'id'            =>  $data['id'],
+                'collect_time'  =>  time(),
+                'status'        =>  4
+            ];
+            self::edit($cancel_data);
+
+            // 库存扣除：确认收货减库存
+            if(config()['paddyshop']['goods_inventory_rules'] == '3'){
+                Goods::inventoryDeduct($data['id']);
+            }
+
+            $orderDetailInfo = OrderDetail::getAll([
+                'field' => 'goods_id,qty',
+                'where' => ['order_id'=>$data['id']],
+                'with' =>['goodsInfo'],
+            ]);
+            foreach ($orderDetailInfo as $v){
+                // 增加销量
+                Goods::where('id', $v['goods_id'])->inc('sales_count', $v['qty'])->update();
+
+                // 赠送积分
+                if(!empty($v['goodsInfo']) && $v['goodsInfo']['give_integral'] > 0){
+                    // 用户积分添加
+                    User::where('id', $data['user']['id'])->inc('integral', $v['goodsInfo']['give_integral'] * $v['qty'])->update();
+                    // 写入积分日志
+                    UserIntegralLog::add(
+                        [
+                            'user_id' => $data['user']['id'],
+                            'type'  => 1,
+                            'original_integral' => $userInfo['integral'],
+                            'new_integral' => $userInfo['integral'] + $v['goodsInfo']['give_integral'] * $v['qty'],
+                            'operation_integral' => $v['goodsInfo']['give_integral'] * $v['qty'],
+                            'msg' => '订单完成赠送积分'
+                        ]
+                    );
+                }
+            }
+            return true;
+        });
     }
 
     /**

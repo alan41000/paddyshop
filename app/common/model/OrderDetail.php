@@ -32,6 +32,15 @@ class OrderDetail extends PaddyShop
 		return $this->hasOne('user', 'id', 'user_id')->bind(['nickname', 'avatar']);
 	}
 
+    /**
+     * 关联商品详情
+     * @Author: Alan Leung
+     */
+    public function goodsInfo()
+    {
+        return $this->hasOne('goods', 'id', 'goods_id');
+    }
+
 	/**
 	 * 商品购买记录弹幕
 	 * @Author: Alan Leung
