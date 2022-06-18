@@ -153,6 +153,8 @@ class Order extends PaddyshopApi
             ];
             if( OrderModel::cancel($cancel_data)){
                 return app('JsonOutput')->success();
+            }else{
+                return app('JsonOutput')->fail();
             }
         }
         catch(\Exception $e)
@@ -262,6 +264,8 @@ class Order extends PaddyshopApi
 
             if(OrderModel::receipt(['id' => $id,'user'=>$this->user])){
                 return app('JsonOutput')->success();
+            }else{
+                return app('JsonOutput')->fail();
             }
         }
         catch(\Exception $e)

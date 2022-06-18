@@ -529,6 +529,59 @@ class Order extends PaddyShop
     }
 
     /**
+     * 关闭订单
+     * @Author: Alan Leung
+     * @param {*} $data
+     */
+    public  static  function  close($data)
+    {
+        return self::transaction(function () use ($data) {
+            $orderInfo = self::getOne(['where'=>['id'=>$data['id']]]);
+            if(empty($orderInfo)) throwException('订单数据有误');
+            if($orderInfo['status'] > 1) throwException('该订单无法关闭');
+            $userInfo = User::getOne([
+                'where'=>['id'=>$orderInfo['user_id']],
+                'field'=>'integral',
+            ]);
+            // 修改订单
+            self::edit([
+                'id'    => $data['id'],
+                'status'    => 5,
+                'cancel_time'   => time(),
+            ]);
+            // 用户消息
+            UserMessage::add([
+                'user_id'       => $orderInfo['user_id'],
+                'title'         =>  '订单关闭',
+                'detail'        =>  empty($data['msg']) ? '订单已被系统关闭' : $data['msg'] ,
+                'business_id'   =>  $data['id'],
+                'business_type' =>  1,
+            ]);
+            // 返还积分
+            if(!empty($orderInfo['extension_data'])){
+                foreach(json_decode($orderInfo['extension_data'],true) as $v){
+                    if($v['name'] == '积分抵现'){
+                        // 加积分
+                        User::where('id', $orderInfo['user_id'])->inc('integral', $v['business'])->update();
+                        // 写入积分日志
+                        UserIntegralLog::add(
+                            [
+                                'user_id' => $orderInfo['user_id'],
+                                'type'  => 1,
+                                'original_integral' => $userInfo['integral'],
+                                'new_integral' => $userInfo['user']['integral'] + $v['business'],
+                                'operation_integral' => $v['business'],
+                                'msg' => '关闭订单返还积分'
+                            ]
+                        );
+                    }
+                }
+            }
+            return true;
+        });
+    }
+
+    /**
      * 取消订单
      * @Author: Alan Leung
      * @param {*} $data

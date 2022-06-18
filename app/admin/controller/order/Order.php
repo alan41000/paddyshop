@@ -98,4 +98,26 @@ class Order extends PaddyshopAdmin
 
         return $where;
     }
+
+    public  function  close()
+    {
+        try
+        {
+            $orderId = getParams('id');
+            if(empty($orderId) || !is_numeric($orderId)) throwException('参数有误');
+
+            $close_data = [
+                'id'  =>  $orderId,
+            ];
+            if( OrderModel::close($close_data)){
+                return app('JsonOutput')->success();
+            }else{
+                return app('JsonOutput')->fail();
+            }
+        }
+        catch(\Exception $e)
+        {
+            return app('JsonOutput')->fail($e->getMessage());
+        }
+    }
 }
