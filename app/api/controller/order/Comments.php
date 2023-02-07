@@ -59,7 +59,7 @@ class Comments extends PaddyshopApi
                 'goods'     =>  $goods,
                 'is_anonymous'  =>  $isAnonymous,
             ];
-            if(GoodsCommentsModel::add($data));{
+            if(GoodsCommentsModel::add($data)){
                 return app('JsonOutput')->success();
             }
             return app('JsonOutput')->fail();

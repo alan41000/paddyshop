@@ -42,7 +42,7 @@ class Goods extends Validate
         // 'price'                     => 'string',
         'min_price'                 => 'float',
         'max_price'                 => 'float',
-        'give_integral'             => 'integer',
+        'give_integral'             => 'integer|>=:0',
         'buy_min_number'            => 'integer',
         'buy_max_number'            => 'integer',
         'is_deduction_inventory'    => 'integer',
@@ -57,6 +57,7 @@ class Goods extends Validate
         // 'sku_base'                  => 'string',
         'is_delete_time'            => 'integer',
         // 'content'                   => 'string',
+		'max_buy_integral' => 'integer|egt:0',
     ];
     
     protected $message  =   [
@@ -90,6 +91,7 @@ class Goods extends Validate
             // 'seo_keywords',
             // 'seo_desc',
             'is_delete_time',
+			'max_buy_integral',
         ],
         'edit'  =>  [
             'id',
@@ -117,6 +119,7 @@ class Goods extends Validate
             // 'seo_keywords',
             // 'seo_desc',
             'is_delete_time',
+			'max_buy_integral',
         ],
         'del'   =>  ['id'],
         'fieldUpdate'   =>  ['id'],

@@ -435,7 +435,7 @@ class Goods extends PaddyShop
                 }
 
                 // 扣除规格库存
-                GoodsSkuValue::where([['id','=',$v['goods_id']],['sku','=',$v['sku']]])->dec('inventory',$v['qty'])->update();
+                GoodsSkuValue::where([['goods_id','=',$v['goods_id']],['sku','=',$v['sku']]])->dec('inventory',$v['qty'])->update();
             }
             return true;
         }
@@ -462,4 +462,36 @@ class Goods extends PaddyShop
         }
         return false;
     }
+
+	public static function inventoryRollBack($params = [])
+	{
+		// 订单状态
+//		if(isset($params['order_data']['status']))
+//		{
+//			// 仅订单取消、关闭操作库存回滚
+//			if(!in_array($params['order_data']['status'], [5,6]))
+//			{
+//				throwException('当前订单状态不允许回滚库存');
+//			}
+//		}
+
+		// 增加总库存
+		Goods::where(['id'=>$params['goods_id']])->inc('inventory',$params['qty'])->update();
+
+		// 增加规格库存
+		$orderDetailInfo = OrderDetail::getOne([
+			'where' => [
+				['id', '=', $params['order_detail_id']],
+				['goods_id','=',$params['goods_id']],
+			]
+		]);
+		if(empty($orderDetailInfo)) throwException('数据有误!');
+		// 已支付、仅退款、下单减库存或付款减库存
+		if($params['type'] == 1 && config()['paddyshop']['goods_inventory_rules'] < 3){
+			$qty = $orderDetailInfo['qty'];
+		}else{
+			$qty = $params['qty'];
+		}
+		GoodsSkuValue::where([['goods_id','=',$params['goods_id']],['sku','=',$orderDetailInfo['sku']]])->inc('inventory',$qty)->update();
+	}
 }

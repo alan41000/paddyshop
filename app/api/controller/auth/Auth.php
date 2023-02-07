@@ -58,7 +58,7 @@ class Auth extends PaddyshopApi
      * @param {string} $iv
      * @param {string} $encryptedData
      */    
-    public function wechatMiniAppAuth(string $authcode,string $iv,string $encryptedData)
+    public function wechatMiniAppAuth(string $authcode)
     {
         try
         {
@@ -77,20 +77,14 @@ class Auth extends PaddyshopApi
             ];
             
             $app = EasyWechat::miniProgram($config);
-            $user_base_data = $app->auth->session($authcode);
-            if(isset($user_base_data['session_key']) && isset($user_base_data['openid']))
-            {
-                $decryptedData = $app->encryptor->decryptData($user_base_data['session_key'], $iv, $encryptedData);
-                $decryptedData['user_base_data'] = $user_base_data;
-                $userInfo = UserModel::wechatMiniAppAuth($decryptedData);
-                if($userInfo)
-                {
+            $session_res = $app->auth->session($authcode);
+            if(isset($session_res['session_key']) && isset($session_res['openid'])){
+                $userInfo = UserModel::wechatMiniAppAuth($session_res);
+                if($userInfo){
                     return app('JsonOutput')->success($userInfo);
                 }
-            }
-            else
-            {
-                throwException($user_base_data['errmsg']);
+            }else{
+                throwException($session_res['errmsg']);
             }
         } catch (\Exception $e) {
             return app('JsonOutput')->fail($e->getMessage());

@@ -79,6 +79,7 @@ class Goods extends PaddyshopAdmin
         $content                    = getParams('content');
         $sku                        = getParams('sku');
         $attribute                  = getParams('attribute');
+		$max_buy_integral                  = getParams('max_buy_integral');
 
         if(empty($sku[0]['price']))
         {
@@ -151,6 +152,7 @@ class Goods extends PaddyshopAdmin
             'content'                       => $content,
             'sku'                           => $sku,
             'attribute'                     => $attribute,
+			'max_buy_integral' => $max_buy_integral,
         ];
         try {
             validate(GoodsValidate::class)->scene('add')->check($data);
@@ -198,6 +200,7 @@ class Goods extends PaddyshopAdmin
         $content                    = getParams('content');        
         $sku                        = getParams('sku');
         $attribute                  = getParams('attribute');
+		$max_buy_integral                  = getParams('max_buy_integral');
 
         if(count($sku) == 1)
         {
@@ -263,6 +266,7 @@ class Goods extends PaddyshopAdmin
             'content'                       => $content,
             'sku'                           => $sku,
             'attribute'                     => $attribute,
+			'max_buy_integral' => $max_buy_integral,
         ];
 
         try {            

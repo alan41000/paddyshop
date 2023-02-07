@@ -13,6 +13,7 @@ namespace app\admin\controller\store;
 use app\admin\controller\PaddyshopAdmin;
 use app\common\model\Goods as GoodsModel;
 use app\common\model\Order as OrderModel;
+use app\common\model\OrderAftersale as OrderAftersaleModel;
 use app\common\model\UserFavorites as UserFavoritesModel;
 use app\common\model\User as UserModel;
 use app\common\model\GoodsComments as GoodsCommentsModel;
@@ -77,7 +78,12 @@ class ShopData extends PaddyshopAdmin
                         ['create_time','<=',getSearchTime('today')['end_time']],
                     ]
                 ]),
-                'afterSale'     =>  0,
+                'afterSale'     =>  OrderAftersaleModel::count([
+					'where' =>  [
+						['create_time','>',getSearchTime('today')['start_time']],
+						['create_time','<=',getSearchTime('today')['end_time']],
+					]
+				]),
                 'withdraw'      =>  0,
                 'comments'      =>  GoodsCommentsModel::count([
                     'where' =>  [

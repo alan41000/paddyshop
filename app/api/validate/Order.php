@@ -14,7 +14,7 @@ namespace app\api\validate;
 use think\Validate;
 
 /**
- * 购物车验证器
+ * 订单验证器
  * @Author: Alan Leung
  */
 class Order extends Validate

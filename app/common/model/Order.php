@@ -809,7 +809,7 @@ class Order extends PaddyShop
         }
 
         return self::transaction(function () use ($params) {
-            // 写入支付日志
+			// 写入支付日志
             $pay_log_data = [
                 'user_id'       => $params['order']['user_id'],
                 'order_id'      => $params['order']['id'],
@@ -828,7 +828,7 @@ class Order extends PaddyShop
                 'id'            => $params['order']['id'],
                 'status'        => 2,
                 'pay_status'    => 1,
-                'pay_price'     => $params['pay']['pay_price'] ?? 0,
+                'pay_price'     => $params['pay']['pay_price'] ?? $params['order']['total_price'],
                 'payment_id'    => $params['order']['payment_id'],
                 'pay_time'      => time(),
             );

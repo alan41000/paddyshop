@@ -92,15 +92,11 @@ class User extends PaddyShop
 		switch ($type){
 			case 'wechatMiniApp':
 				$user_data = [
-					'unionid_weixin' => $params['user_base_data']['unionid'] ?? '',
-					'openid_weixin' => $params['user_base_data']['openid'] ?? '',
+					'unionid_weixin' => $params['unionid'] ?? '',
+					'openid_weixin' => $params['openid'] ?? '',
 					'token'        => createToken(time()),
 					'token_expire' => time() + 86400 * 30,
-					'nickname'     => $params['nickName'],
-					'gender'       => $params['gender'],
-					'avatar'       => $params['avatarUrl'],
-					'province'     => $params['province'],
-					'city'         => $params['city'],
+					'nickname'     => '微信用户'.time(), // TODO 优化用户名
 					'last_login'   => time(),
 					'last_ip'      => getRealIP(),
 				];
@@ -144,15 +140,10 @@ class User extends PaddyShop
 			case 'wechatMiniApp':
 				$user_data = [
 					'id'           => $userInfo['id'],
-					'unionid_weixin' => $params['user_base_data']['unionid'] ?? '',
-					'openid_weixin' => $params['user_base_data']['openid'] ?? '',
+					'unionid_weixin' => $params['unionid'] ?? '',
+					'openid_weixin' => $params['openid'] ?? '',
 					'token'        => createToken(time()),
 					'token_expire' => time() + 86400 * 30,
-					'nickname'     => $params['nickName'],
-					'gender'       => $params['gender'],
-					'avatar'       => $params['avatarUrl'],
-					'province'     => $params['province'],
-					'city'         => $params['city'],
 					'last_login'   => time(),
 					'last_ip'      => getRealIP(),
 				];
@@ -181,7 +172,7 @@ class User extends PaddyShop
 		if(self::edit($user_data))
 		{
 			if($type == 'wechatMiniApp'){
-				return User::where(['openid_weixin'=>$params['user_base_data']['openid']])->find();
+				return User::where(['openid_weixin'=>$params['openid']])->find();
 			}
 			if($type == 'wechatH5'){
 				return User::where(['openid_weixin_web'=>$params['raw']['openid']])->find();
@@ -192,7 +183,7 @@ class User extends PaddyShop
 
 	public static function wechatMiniAppAuth($params)
 	{
-		$unionid = $params['user_base_data']['unionid'] ?? '';
+		$unionid = $params['unionid'] ?? '';
 		if(!empty($unionid)){
 			$userInfo = User::where(['unionid_weixin'=>$unionid])->find();
 			if(empty($userInfo)){
@@ -201,7 +192,7 @@ class User extends PaddyShop
 				return self::userUpdate($params,$userInfo,'wechatMiniApp');
 			}
 		}else{
-			$userInfo = User::where(['openid_weixin'=>$params['user_base_data']['openid']])->find();
+			$userInfo = User::where(['openid_weixin'=>$params['openid']])->find();
 			if(empty($userInfo)){
 				return self::userAdd($params,'wechatMiniApp');
 			}else{
