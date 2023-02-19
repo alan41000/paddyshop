@@ -512,14 +512,13 @@ class OrderAftersale extends PaddyShop
 				'app_id'             => config()['paddyshop']['weixinh5_appid'],
 				'mch_id'             => config()['paddyshop']['weixinpay_mch_id'],
 				'key'                => config()['paddyshop']['weixinpay_key'],
-
 				// 如需使用敏感接口（如退款、发送红包等）需要配置 API 证书路径(登录商户平台下载 API 证书)
-				'cert_path'          => '', // XXX: 绝对路径！！！！
-				'key_path'           => '',      // XXX: 绝对路径！！！！
-
+				'cert_path'          => file_exists(root_path().'wechatpay_apiclient_cert.pem') ? root_path().'wechatpay_apiclient_cert.pem' : '',
+				'key_path'           => file_exists(root_path().'wechatpay_apiclient_key.pem') ? root_path().'wechatpay_apiclient_key.pem' : '',
+				// 回调地址
 				'notify_url'         => config()['paddyshop']['website_url'].'api/order.order/wxPayNotify/ish5/1',
-
-				'sandbox'       => false, // 设置为 false 或注释则关闭沙箱模式
+				//  设置为false 或注释则关闭沙箱模式
+				'sandbox'       => false,
 			];
 		}else{
 			$config = [
@@ -527,13 +526,13 @@ class OrderAftersale extends PaddyShop
 				'app_id'             => config()['paddyshop']['weixinminiapp_appid'],
 				'mch_id'             => config()['paddyshop']['weixinpay_mch_id'],
 				'key'                => config()['paddyshop']['weixinpay_key'],
-
 				// 如需使用敏感接口（如退款、发送红包等）需要配置 API 证书路径(登录商户平台下载 API 证书)
-				'cert_path'          => '', // XXX: 绝对路径！！！！
-				'key_path'           => '',      // XXX: 绝对路径！！！！
-
+				'cert_path'          => file_exists(root_path().'wechatpay_apiclient_cert.pem') ? root_path().'wechatpay_apiclient_cert.pem' : '',
+				'key_path'           => file_exists(root_path().'wechatpay_apiclient_key.pem') ? root_path().'wechatpay_apiclient_key.pem' : '',
+				// 回调地址
 				'notify_url'         => config()['paddyshop']['website_url'].'api/order.order/wxPayNotify',
-				'sandbox'       => false, // 设置为 false 或注释则关闭沙箱模式
+				// 设置为 false 或注释则关闭沙箱模式
+				'sandbox'       => false,
 			];
 		}
 

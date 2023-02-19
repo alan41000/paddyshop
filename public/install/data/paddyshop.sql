@@ -6094,4 +6094,56 @@ CREATE TABLE `user_integral_log` (
                                      KEY `user_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户积分日志';
 
+CREATE TABLE `order_aftersale` (
+                                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+                                   `order_no` char(60) NOT NULL DEFAULT '' COMMENT '订单号',
+                                   `order_detail_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '订单详情id',
+                                   `order_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '订单id',
+                                   `goods_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '商品id',
+                                   `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
+                                   `status` tinyint(2) unsigned NOT NULL DEFAULT '0' COMMENT '状态（0待确认, 1待退货, 2待审核, 3已完成, 4已拒绝, 5已取消）',
+                                   `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '业务类型（1仅退款, 2退货退款）',
+                                   `refundment` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '退款类型（1原路退回, 2退至钱包, 3手动处理）',
+                                   `reason` varchar(255) NOT NULL DEFAULT '' COMMENT '申请原因',
+                                   `qty` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '退货数量',
+                                   `price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '退款金额',
+                                   `msg` varchar(255) NOT NULL DEFAULT '' COMMENT '退款说明',
+                                   `images` text COMMENT '凭证图片（一维数组json存储）',
+                                   `refuse_reason` varchar(230) NOT NULL DEFAULT '' COMMENT '拒绝原因',
+                                   `express_name` varchar(60) NOT NULL DEFAULT '' COMMENT '快递名称',
+                                   `express_number` varchar(60) NOT NULL DEFAULT '' COMMENT '快递单号',
+                                   `apply_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '申请时间',
+                                   `confirm_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '确认时间',
+                                   `delivery_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '退货时间',
+                                   `audit_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '审核时间',
+                                   `cancel_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '取消时间',
+                                   `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '添加时间',
+                                   `update_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+                                   PRIMARY KEY (`id`),
+                                   KEY `order_id` (`order_id`),
+                                   KEY `goods_id` (`goods_id`),
+                                   KEY `user_id` (`user_id`),
+                                   KEY `status` (`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='订单售后';
+
+CREATE TABLE `refund_log` (
+                              `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+                              `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
+                              `order_id` int(11) unsigned NOT NULL COMMENT '订单id',
+                              `trade_no` varchar(100) NOT NULL DEFAULT '' COMMENT '支付平台交易号',
+                              `buyer_user` varchar(60) NOT NULL DEFAULT '' COMMENT '支付平台用户帐号',
+                              `refund_price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '退款金额',
+                              `pay_price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '订单实际支付金额',
+                              `msg` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
+                              `payment` varchar(60) NOT NULL DEFAULT '' COMMENT '支付方式标记',
+                              `payment_name` varchar(60) NOT NULL DEFAULT '' COMMENT '支付方式名称',
+                              `refundment` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '退款类型（0原路退回, 1退至钱包, 2手动处理）',
+                              `business_type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '业务类型（0默认, 1订单, 2充值, ...）',
+                              `return_params` text COMMENT '支付平台返回参数（以json存储）',
+                              `create_time` int(11) unsigned NOT NULL COMMENT '添加时间',
+                              PRIMARY KEY (`id`),
+                              KEY `pay_type` (`payment`),
+                              KEY `order_id` (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='退款日志';
+
 SET FOREIGN_KEY_CHECKS = 1;
