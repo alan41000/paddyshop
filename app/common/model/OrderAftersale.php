@@ -424,6 +424,7 @@ class OrderAftersale extends PaddyShop
 				// 写入退款日志
 				$refund_log = [
 					'user_id'       => $orderInfo['user_id'],
+                    'order_id'  => $orderInfo['id'],
 					'business_id'   => $orderInfo['id'],
 					'pay_price'     => $orderInfo['pay_price'],
 					'trade_no'      => $result['out_trade_no'] ?? '',
@@ -431,17 +432,19 @@ class OrderAftersale extends PaddyShop
 					'refund_price'  => $result['refund_fee'] ?? '',
 //					'msg'           => $pay_params['refund_reason'],
 					'msg'           => '',
-					'payment'       => $payLogInfo['payment'],
-					'payment_name'  => $payLogInfo['payment_name'],
+					'payment'       => $payLogInfo['payment'] ?? '', // TODO 处理payment
+					'payment_name'  => $payLogInfo['payment_name'] ?? '', //TODO 处理payment_name
 					'refundment'    => $params['refundment'],
 					'business_type' => 0,
 //					'return_params' => isset($ret['data']['return_params']) ? $ret['data']['return_params'] : '',
 				];
 				RefundLog::add($refund_log);
 				return true;
-			}
+			}else{
+                throwException(($result['err_code'] ?? '').'|'.($result['err_code_des'] ?? ''));
+            }
 		}
-		throwException('退款失败');
+		throwException($result['return_msg'] . '|'.($result['err_code'] ?? '').'|'.($result['err_code_des'] ?? ''));
 	}
 
 	/**

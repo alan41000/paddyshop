@@ -541,6 +541,7 @@ CREATE TABLE `order_detail`  (
   `sku_weight` decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '重量（kg）',
   `sku_code` varchar(80) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '编码',
   `sku_barcode` varchar(80) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '条形码',
+  `refund_status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '退款状态(0默认，1申请中，2已完成，3已拒绝)',
   `refund_price` decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '退款金额',
   `returned_qty` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '退货数量',
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '添加时间',
@@ -723,6 +724,11 @@ INSERT INTO `permission_menu` VALUES (102, 104, '查看', NULL, 'marketing.coupo
 INSERT INTO `permission_menu` VALUES (103, 70, '领券记录', 'couponUser', 'marketing.couponuser:list', NULL, 'bar-chart-o', '/marketing/couponuser', '/marketing/views/couponuser', 1, NULL, 1, 1647937687, 1652255599);
 INSERT INTO `permission_menu` VALUES (104, 70, '优惠券管理', 'couponList', 'marketing.coupon:list', NULL, 'thumbs-up', '/marketing/coupon', '/marketing/views/coupon', 1, NULL, 1, 1648028575, 1652255300);
 INSERT INTO `permission_menu` VALUES (105, 90, '数据', '', 'setting.config:getall', NULL, '', NULL, NULL, 2, NULL, 1, 1652257942, 1652257952);
+INSERT INTO `permission_menu` VALUES (106, 66, '售后管理', 'aftersale', 'order.aftersale:list', NULL, 'balance-scale', '/order/aftersale', '/order/views/aftersale', 1, NULL, 1, 1663862483, 1663862764);
+INSERT INTO `permission_menu` VALUES (107, 106, '审核', 'audit', 'order.aftersale:audit', NULL, '', NULL, NULL, 2, NULL, 1, 1665072635, 1665072635);
+INSERT INTO `permission_menu` VALUES (108, 106, '拒绝', 'refuse', 'order.aftersale:refuse', NULL, '', NULL, NULL, 2, NULL, 1, 1665072679, 1665072694);
+INSERT INTO `permission_menu` VALUES (109, 106, '确认', 'confirm', 'order.aftersale:confirm', NULL, '', NULL, NULL, 2, NULL, 1, 1666022881, 1666022881);
+
 
 -- ----------------------------
 -- Table structure for permission_role
