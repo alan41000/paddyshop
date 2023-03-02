@@ -96,7 +96,7 @@ class User extends PaddyShop
 					'openid_weixin' => $params['openid'] ?? '',
 					'token'        => createToken(time()),
 					'token_expire' => time() + 86400 * 30,
-					'nickname'     => '微信用户'.time(), // TODO 优化用户名
+					'nickname'     => '微信用户'.self::getNickNameStr(),
 					'last_login'   => time(),
 					'last_ip'      => getRealIP(),
 				];
@@ -220,4 +220,16 @@ class User extends PaddyShop
 			}
 		}
 	}
+
+    private static function getNickNameStr()
+    {
+        // 暂不考虑重复问题
+        $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $username = "";
+        for( $i = 0; $i < 6; $i++ )
+        {
+            $username .= $chars[mt_rand(0, strlen($chars)-1)];
+        }
+        return $username;
+    }
 }

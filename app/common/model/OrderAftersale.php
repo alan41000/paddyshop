@@ -14,13 +14,13 @@ use EasyWeChat\Factory as EasyWeChat;
 
 class OrderAftersale extends PaddyShop
 {
-	protected $type = [
-		'apply_time'      =>  'timestamp',
-		'confirm_time'     =>  'timestamp',
-		'delivery_time'       =>  'timestamp',
-		'audit_time'      =>  'timestamp',
-		'cancel_time'        =>  'timestamp',
-	];
+    protected $type = [
+        'apply_time'    => 'timestamp',
+        'confirm_time'  => 'timestamp',
+        'delivery_time' => 'timestamp',
+        'audit_time'    => 'timestamp',
+        'cancel_time'   => 'timestamp',
+    ];
 
 	// 设置json类型字段
 	protected $json = ['images'];
@@ -65,7 +65,7 @@ class OrderAftersale extends PaddyShop
 		return $this->hasOne('OrderAddress', 'order_id', 'id');
 	}
 
-	public  static  function  add($data)
+	public static function add($data)
 	{
 		// 1.获取订单数据
 		$orderInfo = Order::getOne(['where'=>[
@@ -137,7 +137,7 @@ class OrderAftersale extends PaddyShop
 		return false;
 	}
 
-	public  static  function  refuse($params)
+	public static function refuse($params)
 	{
 		// 售后订单信息
 		$orderAftersaleInfo = self::getOne(['where' => [
@@ -269,13 +269,13 @@ class OrderAftersale extends PaddyShop
 			}
 			$refund_price = priceNumberFormat($orderInfo['refund_price'] + $orderAftersaleInfo['price']);
 			$returned_qty = intval($orderInfo['returned_qty'] + $orderAftersaleInfo['qty']);
-			$order_upd_data = [
-				'id'	=>	$orderInfo['id'],
-				'pay_status'        => ($refund_price >= $orderInfo['pay_price']) ? 2 : 3,
-				'refund_price'      => $refund_price,
-				'returned_qty' => $returned_qty,
-				'close_time'        => time(),
-			];
+            $order_upd_data = [
+                'id'           => $orderInfo['id'],
+                'pay_status'   => ($refund_price >= $orderInfo['pay_price']) ? 2 : 3,
+                'refund_price' => $refund_price,
+                'returned_qty' => $returned_qty,
+                'close_time'   => time(),
+            ];
 
 			// 如果退款金额和退款数量到达订单实际是否金额和购买数量则关闭订单
 			if($refund_price >= $orderInfo['pay_price'] || $returned_qty >= $orderInfo['qty_total'])
@@ -338,12 +338,12 @@ class OrderAftersale extends PaddyShop
 
 			// 消息通知
 			$detail = '订单退款成功，金额'.priceNumberFormat($orderAftersaleInfo['price']).'元';
-			UserMessage::add([
-				'user_id'	=> $orderInfo['user_id'],
-				 'title'	=>	'订单退款',
-				 'detail'	=>	$detail,
-				'business_id'	=> $orderInfo['id'],
-			]);
+            UserMessage::add([
+                'user_id'     => $orderInfo['user_id'],
+                'title'       => '订单退款',
+                'detail'      => $detail,
+                'business_id' => $orderInfo['id'],
+            ]);
 
 			// 更新退款状态
 			$data = [
